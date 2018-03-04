@@ -9,7 +9,9 @@
         "test": "jest",
         "storybook": "NODE_PATH=. start-storybook -p 9001 -c .storybook",
         "precommit": "lint-staged",
-        "lint": "eslint -c .eslintrc.json --ext .js,.jsx ./"
+        "eslint": "eslint -c .eslintrc.json --ext .js,.jsx ./",
+        "format": "prettier --config .prettierrc --write **/*.{js,jsx}",
+        "lint": "npm run eslint && npm run format"
     },
     "keywords": [],
     "author": "",

@@ -8,5 +8,7 @@ const stories = storiesOf('Storybook Knobs', module);
 stories.addDecorator(withKnobs);
 
 stories.add('with a button', () => (
-  <Button primary={boolean('Primary', true)}>{ text('Label', '😀 😎 👍 💯') }</Button>
+  <Button primary={boolean('Primary', true)}>
+    {text('Label', '😀 😎 👍 💯')}
+  </Button>
 ));
