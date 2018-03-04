@@ -7,10 +7,16 @@ cache:
   paths:
   - node_modules/
 
-test:lint:
-  script:
-   - npm run test
+stages:
+  - lint
+  - test
 
-test:unit:
+lint:
+  stage: lint
+  script:
+   - npm run lint
+
+test:
+  stage: test
   script:
     - npm run test
