@@ -1,0 +1,7 @@
+image: node:8.9.0
+
+
+all_tests:
+  script:
+    - npm install
+    - npm run lint
