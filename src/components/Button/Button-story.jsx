@@ -1,9 +1,10 @@
 import React from 'react';
-import Button from './Button';
 import { storiesOf } from '@storybook/react';
-import { withKnobs, text, boolean, number } from '@storybook/addon-knobs/react';
+import { withKnobs, text, boolean } from '@storybook/addon-knobs/react';
+import Button from './Button';
 
 const stories = storiesOf('Storybook Knobs', module);
+
 stories.addDecorator(withKnobs);
 
 stories.add('with a button', () => (

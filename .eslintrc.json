@@ -3,17 +3,20 @@
         "airbnb",
         "prettier",
         "prettier/react",
-        "jest"
+        "plugin:jest/recommended"
     ],
     "env": {
         "browser": true,
         "es6": true,
         "jest/globals": true
     },
+    "globals": {
+        "Rollbar": true
+    },
     "parser": "babel-eslint",
     "plugins": [
         "react",
-        "plugin:jest/recommended"
+        "jest"
     ],
     "rules": {
         "arrow-body-style": 0,
