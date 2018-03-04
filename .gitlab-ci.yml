@@ -1,6 +1,11 @@
-image: node:8.9.0
+image: node:latest
 
-all_tests:
+cache:
+  paths:
+  - node_modules/
+
+test:
   script:
-    - npm install
-    - npm run lint
+   - npm install
+   - npm run lint
+   - npm run test
