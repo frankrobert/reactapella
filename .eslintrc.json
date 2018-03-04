@@ -2,14 +2,19 @@
     "extends": [
         "airbnb",
         "prettier",
-        "prettier/react"
+        "prettier/react",
+        "jest"
     ],
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "jest/globals": true
     },
     "parser": "babel-eslint",
-    "plugins": ["react"],
+    "plugins": [
+        "react",
+        "plugin:jest/recommended"
+    ],
     "rules": {
         "arrow-body-style": 0,
         "comma-dangle": ["warn", "never"],
