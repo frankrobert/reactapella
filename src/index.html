@@ -6,15 +6,14 @@
     <title>Korva Education Platform</title>
 
     <script>
+        // TODO Remove this and setup env variables when moving to staging + production
         var _rollbarConfig = {
-            accessToken: "c641400b1f3e49e18c5cf5c2c240bf91",
+            accessToken: "06b649c5f3e5424db8535b46a9573812",
             captureUncaught: true,
-            captureUnhandledRejections: true,
             payload: {
-                environment: "dev"
+                environment: "test"
             }
         };
-        // Rollbar Snippet
         ! function(r) {
             function o(n) {
                 if (e[n]) return e[n].exports;
@@ -69,7 +68,7 @@
                 return n(function() {
                     o.captureUncaught && (t._rollbarOldOnError = r.onerror, i.captureUncaughtExceptions(r, t, !0), i.wrapGlobals(r, t, !0)), o.captureUnhandledRejections && i.captureUnhandledRejections(r, t, !0);
                     var n = o.autoInstrument;
-                    return o.enabled !== !1 && (void 0 === n || n === !0 || "object" == typeof n && n.network) && r.addEventListener && (r.addEventListener("load", t.captureLoad.bind(t)), r.addEventListener("DOMContentLoaded", t.captureDomContentLoaded.bind(t))), r[e] = t, t
+                    return (void 0 === n || n === !0 || "object" == typeof n && n.network) && r.addEventListener && (r.addEventListener("load", t.captureLoad.bind(t)), r.addEventListener("DOMContentLoaded", t.captureDomContentLoaded.bind(t))), r[e] = t, t
                 })()
             }
 
@@ -143,7 +142,7 @@
                     return r
                 }
             };
-            for (var u = "log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection,captureEvent,captureDomContentLoaded,captureLoad".split(","), f = 0; f < u.length; ++f) t.prototype[u[f]] = l(u[f]);
+            for (var u = "log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection,captureDomContentLoaded,captureLoad".split(","), f = 0; f < u.length; ++f) t.prototype[u[f]] = l(u[f]);
             r.exports = {
                 setupShim: a,
                 Rollbar: p
@@ -219,7 +218,7 @@
                             var o = Array.prototype.slice.call(arguments, 0);
                             if (this.impl[r]) return this.impl[r].apply(this.impl, o)
                         }
-                    }, e = "log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection,_createItem,wrap,loadFull,shimId,captureEvent,captureDomContentLoaded,captureLoad".split(","), n = 0; n < e.length; n++) r[e[n]] = o(e[n])
+                    }, e = "log,debug,info,warn,warning,error,critical,global,configure,handleUncaughtException,handleUnhandledRejection,_createItem,wrap,loadFull,shimId,captureDomContentLoaded,captureLoad".split(","), n = 0; n < e.length; n++) r[e[n]] = o(e[n])
             }
             e.prototype._swapAndProcessMessages = function(r, o) {
                 this.impl = r(this.options);
@@ -240,7 +239,6 @@
                 }
             }
         }]);
-        // End Rollbar Snippet
     </script>
 </head>
 
