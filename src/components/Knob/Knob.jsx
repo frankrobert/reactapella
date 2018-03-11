@@ -10,7 +10,13 @@ const KnobWrapper = styled.div`
 
 const KnobNeedle = styled.circle.attrs({ cx: '20', cy: '30', r: '1.5', fill: '#4eccff' })`
   transform-origin: 20px 20px 0;
-  transform: rotate(${(props) => props.degreeOffset + props.rangeValue * (props.degreeRange / 100 || 3.6) || 0}deg);
+  transform: rotate(${(props) => {
+    return (
+      props.degreeOffset
+      + (props.divisions > 1 ? props.getClosest(props.rangeValue) : props.rangeValue)
+      * (props.degreeRange / 100 || 3.6) || 0
+    );
+  }}deg);
 `;
 
 const KnobStyles = (
@@ -56,12 +62,14 @@ class KnobInput extends Component {
   }
 
   updateOnScroll = (e) => {
+    const { max, min } = this.props;
+
     this.range.focus();
     this.setState((state) => {
       let newValue = state.rangeValue + e.deltaY / 4;
 
-      if (newValue > 100) newValue = 100;
-      else if (newValue < 0) newValue = 0;
+      if (newValue > max) newValue = 100;
+      else if (newValue < min) newValue = 0;
 
       return { rangeValue: newValue }
     });
@@ -71,7 +79,46 @@ class KnobInput extends Component {
     this.setState({ rangeValue: e.target.value });
   }
 
+  getClosest = (value) => {
+    const { divisions, max } = this.props;
+    const divisionStep = max / divisions;
+    const divisionsList = [];
+
+    for (let i = 0; i <= divisions; i++) {
+      divisionsList.push(i * divisionStep);
+    }
+
+    return divisionsList.reduce((prev, curr) => {
+      return (Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev);
+    });
+  };
+
+  renderDivisions = () => {
+    const { divisions, max } = this.props;
+    const divisionStep = max / divisions;
+    const options = [];
+
+    for (let i = 0; i <= divisions; i++) {
+      const option = <option value={divisionStep * i} />;
+      options.push(option);
+    }
+
+    return (
+      <datalist id="divisions">
+        {options.map((option) => option)}
+      </datalist>
+    );
+  };
+
   render() {
+    const {
+      degreeOffset,
+      degreeRange,
+      divisions,
+      min,
+      max,
+      step
+    } = this.props;
     const { rangeValue } = this.state;
 
     return (
@@ -93,8 +140,10 @@ class KnobInput extends Component {
             <KnobNeedle
               className="indicator-dot"
               rangeValue={rangeValue}
-              degreeOffset={0}
-              degreeRange={180}
+              divisions={divisions}
+              degreeOffset={degreeOffset}
+              degreeRange={degreeRange}
+              getClosest={this.getClosest}
             />
           </g>
         </svg>
@@ -102,9 +151,12 @@ class KnobInput extends Component {
           onChange={(e) => this.onChange(e)}
           innerRef={(e) => this.range = e}
           value={rangeValue}
-          min={0}
-          max={100}
+          min={min}
+          max={max}
+          step={step}
+          list={divisions > 1 ? "divisions" : null}
         />
+        {this.renderDivisions()}
       </KnobWrapper>
     );
   }
@@ -118,7 +170,15 @@ KnobInput.propTypes = {
   min: PropTypes.number,
   max: PropTypes.number,
   initValue: PropTypes.number,
-  orientation: PropTypes.string
+};
+
+KnobInput.defaultProps = {
+  degreeRange: 360,
+  degreeOffset: 0,
+  step: 1,
+  divisions: 1,
+  min: 0,
+  max: 100
 };
 
 export default KnobInput;
