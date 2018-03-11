@@ -10,7 +10,7 @@ const KnobWrapper = styled.div`
 
 const KnobNeedle = styled.circle.attrs({ cx: '20', cy: '30', r: '1.5', fill: '#4eccff' })`
   transform-origin: 20px 20px 0;
-  transform: rotate(${(props) => props.rangeValue * 3.6 || 0}deg);
+  transform: rotate(${(props) => props.degreeOffset + props.rangeValue * (props.degreeRange / 100 || 3.6) || 0}deg);
 `;
 
 const KnobStyles = (
@@ -90,7 +90,12 @@ class KnobInput extends Component {
             <circle cx="20" cy="20" r="14" fill="url(#grad-dial-base)" stroke="#242a2e" strokeWidth="1.5" />
             <circle cx="20" cy="20" r="13" fill="transparent" stroke="url(#grad-dial-highlight)" strokeWidth="1.5" />
             <circle className="dial-highlight" cx="20" cy="20" r="14" fill="#ffffff" />
-            <KnobNeedle className="indicator-dot" rangeValue={rangeValue} />
+            <KnobNeedle
+              className="indicator-dot"
+              rangeValue={rangeValue}
+              degreeOffset={0}
+              degreeRange={180}
+            />
           </g>
         </svg>
         <VerticalKnobRange
