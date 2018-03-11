@@ -82,11 +82,7 @@ class KnobInput extends Component {
   getClosest = (value) => {
     const { divisions, max } = this.props;
     const divisionStep = max / divisions;
-    const divisionsList = [];
-
-    for (let i = 0; i <= divisions; i++) {
-      divisionsList.push(i * divisionStep);
-    }
+    const divisionsList = [...Array(divisions + 1)].map((division, i) => i * divisionStep);
 
     return divisionsList.reduce((prev, curr) => {
       return (Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev);
@@ -96,12 +92,7 @@ class KnobInput extends Component {
   renderDivisions = () => {
     const { divisions, max } = this.props;
     const divisionStep = max / divisions;
-    const options = [];
-
-    for (let i = 0; i <= divisions; i++) {
-      const option = <option value={divisionStep * i} />;
-      options.push(option);
-    }
+    const options = [...Array(divisions + 1)].map((division, i) => <option key={i} value={divisionStep * i} />);
 
     return (
       <datalist id="divisions">
