@@ -8,19 +8,28 @@ const KnobWrapper = styled.div`
   position: relative;
 `;
 
-const KnobNeedle = styled.circle.attrs({ cx: '20', cy: '30', r: '1.5', fill: '#4eccff' })`
+const KnobNeedle = styled.circle.attrs({
+  cx: '20',
+  cy: '30',
+  r: '1.5',
+  fill: '#4eccff'
+})`
   transform-origin: 20px 20px 0;
-  transform: rotate(${(props) => {
-    return (
-      props.degreeOffset
-      + (props.divisions > 1 ? props.getClosest(props.rangeValue) : props.rangeValue)
-      * (props.degreeRange / 100 || 3.6) || 0
-    );
-  }}deg);
+  transform: rotate(
+    ${(props) => {
+      return (
+        props.degreeOffset +
+          (props.divisions > 1
+            ? props.getClosest(props.rangeValue)
+            : props.rangeValue) *
+            (props.degreeRange / 100 || 3.6) || 0
+      );
+    }}deg
+  );
 `;
 
 const KnobStyles = (
-  <svg className="defs" style={{ position: 'absolute '}}>
+  <svg className="defs" style={{ position: 'absolute' }}>
     <defs>
       <radialGradient id="grad-dial-soft-shadow" cx="0.5" cy="0.5" r="0.5">
         <stop offset="85%" stopColor="#242a2e" stopOpacity="0.4" />
@@ -71,7 +80,7 @@ class KnobInput extends Component {
       if (newValue > max) newValue = 100;
       else if (newValue < min) newValue = 0;
 
-      return { rangeValue: newValue }
+      return { rangeValue: newValue };
     });
   };
 
@@ -82,52 +91,89 @@ class KnobInput extends Component {
   getClosest = (value) => {
     const { divisions, max } = this.props;
     const divisionStep = max / divisions;
-    const divisionsList = [...Array(divisions + 1)].map((division, i) => i * divisionStep);
+    const divisionsList = [...Array(divisions + 1)].map((division, i) => {
+      return i * divisionStep;
+    });
 
     return divisionsList.reduce((prev, curr) => {
-      return (Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev);
+      return Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev;
     });
   };
 
   renderDivisions = () => {
     const { divisions, max } = this.props;
     const divisionStep = max / divisions;
-    const options = [...Array(divisions + 1)].map((division, i) => <option key={i} value={divisionStep * i} />);
+    const options = [...Array(divisions + 1)].map((division, i) => (
+      <option key={i} value={divisionStep * i} />
+    ));
 
     return (
-      <datalist id="divisions">
-        {options.map((option) => option)}
-      </datalist>
+      <datalist id="divisions">{options.map((option) => option)}</datalist>
     );
   };
 
   render() {
-    const {
-      degreeOffset,
-      degreeRange,
-      divisions,
-      min,
-      max,
-      step
-    } = this.props;
+    const { degreeOffset, degreeRange, divisions, min, max, step } = this.props;
     const { rangeValue } = this.state;
 
     return (
       <KnobWrapper>
         {KnobStyles}
-        <svg className="knob-input__visual" style={{ maxHeight: 200, zIndex: 2 }} viewBox="0 0 40 40">
-          <circle className="focus-indicator" cx="20" cy="20" r="18" fill="#4eccff" filter="url(#glow)" />
-          <circle className="indicator-ring-bg" cx="20" cy="20" r="18" fill="#353b3f" stroke="#23292d" />
+        <svg
+          className="knob-input__visual"
+          style={{ maxHeight: 200, zIndex: 2 }}
+          viewBox="0 0 40 40"
+        >
+          <circle
+            className="focus-indicator"
+            cx="20"
+            cy="20"
+            r="18"
+            fill="#4eccff"
+            filter="url(#glow)"
+          />
+          <circle
+            className="indicator-ring-bg"
+            cx="20"
+            cy="20"
+            r="18"
+            fill="#353b3f"
+            stroke="#23292d"
+          />
           <path className="indicator-ring" d="M20,20Z" fill="#4eccff" />
-          <g
-            className="dial"
-            ref={(e) => this.dial = e}
-          >
+          <g className="dial" ref={(e) => (this.dial = e)}>
             <circle cx="20" cy="20" r="16" fill="url(#grad-dial-soft-shadow)" />
-            <ellipse cx="20" cy="22" rx="14" ry="14.5" fill="#242a2e" opacity="0.15" />
-            <circle cx="20" cy="20" r="14" fill="url(#grad-dial-base)" stroke="#242a2e" strokeWidth="1.5" />
-            <circle cx="20" cy="20" r="13" fill="transparent" stroke="url(#grad-dial-highlight)" strokeWidth="1.5" />
-            <circle className="dial-highlight" cx="20" cy="20" r="14" fill="#ffffff" />
+            <ellipse
+              cx="20"
+              cy="22"
+              rx="14"
+              ry="14.5"
+              fill="#242a2e"
+              opacity="0.15"
+            />
+            <circle
+              cx="20"
+              cy="20"
+              r="14"
+              fill="url(#grad-dial-base)"
+              stroke="#242a2e"
+              strokeWidth="1.5"
+            />
+            <circle
+              cx="20"
+              cy="20"
+              r="13"
+              fill="transparent"
+              stroke="url(#grad-dial-highlight)"
+              strokeWidth="1.5"
+            />
+            <circle
+              className="dial-highlight"
+              cx="20"
+              cy="20"
+              r="14"
+              fill="#ffffff"
+            />
             <KnobNeedle
               className="indicator-dot"
               rangeValue={rangeValue}
@@ -140,12 +186,12 @@ class KnobInput extends Component {
         </svg>
         <VerticalKnobRange
           onChange={(e) => this.onChange(e)}
-          innerRef={(e) => this.range = e}
+          innerRef={(e) => (this.range = e)}
           value={rangeValue}
           min={min}
           max={max}
           step={step}
-          list={divisions > 1 ? "divisions" : null}
+          list={divisions > 1 ? 'divisions' : null}
         />
         {this.renderDivisions()}
       </KnobWrapper>
@@ -160,7 +206,7 @@ KnobInput.propTypes = {
   divisions: PropTypes.number,
   min: PropTypes.number,
   max: PropTypes.number,
-  initValue: PropTypes.number,
+  initValue: PropTypes.number
 };
 
 KnobInput.defaultProps = {
