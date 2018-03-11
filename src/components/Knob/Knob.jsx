@@ -187,7 +187,7 @@ class KnobInput extends Component {
         <VerticalKnobRange
           onChange={(e) => this.onChange(e)}
           innerRef={(e) => (this.range = e)}
-          value={rangeValue}
+          value={rangeValue || 0}
           min={min}
           max={max}
           step={step}
