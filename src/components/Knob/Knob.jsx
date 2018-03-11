@@ -43,11 +43,28 @@ const VerticalKnobRange = styled.input.attrs({ type: 'range' })`
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: -1;
 `;
 
 class KnobInput extends Component {
   state = {
     rangeValue: 0
+  };
+
+  componentDidMount() {
+    this.dial.addEventListener('wheel', this.updateOnScroll);
+  }
+
+  updateOnScroll = (e) => {
+    this.range.focus();
+    this.setState((state) => {
+      let newValue = state.rangeValue + e.deltaY / 4;
+
+      if (newValue > 100) newValue = 100;
+      else if (newValue < 0) newValue = 0;
+
+      return { rangeValue: newValue }
+    });
   };
 
   onChange(e) {
@@ -64,7 +81,10 @@ class KnobInput extends Component {
           <circle className="focus-indicator" cx="20" cy="20" r="18" fill="#4eccff" filter="url(#glow)" />
           <circle className="indicator-ring-bg" cx="20" cy="20" r="18" fill="#353b3f" stroke="#23292d" />
           <path className="indicator-ring" d="M20,20Z" fill="#4eccff" />
-          <g className="dial">
+          <g
+            className="dial"
+            ref={(e) => this.dial = e}
+          >
             <circle cx="20" cy="20" r="16" fill="url(#grad-dial-soft-shadow)" />
             <ellipse cx="20" cy="22" rx="14" ry="14.5" fill="#242a2e" opacity="0.15" />
             <circle cx="20" cy="20" r="14" fill="url(#grad-dial-base)" stroke="#242a2e" strokeWidth="1.5" />
@@ -73,7 +93,13 @@ class KnobInput extends Component {
             <KnobNeedle className="indicator-dot" rangeValue={rangeValue} />
           </g>
         </svg>
-        <VerticalKnobRange onChange={(e) => this.onChange(e)} />
+        <VerticalKnobRange
+          onChange={(e) => this.onChange(e)}
+          innerRef={(e) => this.range = e}
+          value={rangeValue}
+          min={0}
+          max={100}
+        />
       </KnobWrapper>
     );
   }
