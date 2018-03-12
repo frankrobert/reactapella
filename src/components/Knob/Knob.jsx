@@ -62,25 +62,76 @@ const VerticalKnobRange = styled.input.attrs({ type: 'range' })`
 `;
 
 class KnobInput extends Component {
+  constructor(props) {
+    super(props);
+    this.scrolling = null;
+  }
+
   state = {
-    rangeValue: 0
+    rangeValue: this.props.initialValue || 0,
+    dragging: false,
+    dragPosition: {
+      x: 0,
+      y: 0
+    }
   };
 
   componentDidMount() {
     this.dial.addEventListener('wheel', this.updateOnScroll);
   }
 
-  updateOnScroll = (e) => {
-    const { max, min } = this.props;
+  componentDidUpdate(prevProps, prevState) {
+    const { dragging } = this.state;
+    if (dragging && !prevState.dragging) {
+      document.addEventListener('mousemove', this.onMouseMove);
+      document.addEventListener('mouseup', this.onMouseUp);
+    } else if (!this.state.dragging && prevState.dragging) {
+      document.removeEventListener('mousemove', this.onMouseMove);
+      document.removeEventListener('mouseup', this.onMouseUp);
+    }
+  }
 
+  onMouseDown = (e) => {
+    const offset = this.dial.getBoundingClientRect();
+    this.setState({ dragging: true, dragPosition: { x: e.pageX - offset.left, y: e.pageY - offset.top }});
+  };
+
+  onMouseMove = (e) => {
+    const { dragging, dragPosition, rangeValue } = this.state;
+    const { min, max } = this.props;
+    const oldDragAmount = { ...dragPosition };
+
+    if (!dragging) return;
+
+    let dragAmount = rangeValue + oldDragAmount.y - e.pageY;
+    if (dragAmount > max) dragAmount = max;
+    else if (dragAmount < min) dragAmount = min;
+
+    this.setState({ dragPosition: { x: e.pageX, y: e.pageY }, rangeValue: dragAmount });
+  };
+
+  onMouseUp = () => {
+    const { initialValue, valueSnapping } = this.props;
+    const updateObject = { dragging: false };
+
+    if (valueSnapping) updateObject.rangeValue = initialValue;
+
+    this.setState(updateObject);
+  };
+
+  updateOnScroll = (e) => {
+    const { initialValue, max, min } = this.props;
+    clearTimeout(this.scrolling);
     this.range.focus();
     this.setState((state) => {
       let newValue = state.rangeValue + e.deltaY / 4;
 
-      if (newValue > max) newValue = 100;
-      else if (newValue < min) newValue = 0;
+      if (newValue > max) newValue = max;
+      else if (newValue < min) newValue = min;
 
       return { rangeValue: newValue };
+    }, () => {
+      this.scrolling = setTimeout(() => this.setState({ rangeValue: initialValue }), 100);
     });
   };
 
@@ -107,6 +158,8 @@ class KnobInput extends Component {
       <option key={i} value={divisionStep * i} />
     ));
 
+    if (divisions <= 1) return;
+
     return (
       <datalist id="divisions">{options.map((option) => option)}</datalist>
     );
@@ -123,6 +176,8 @@ class KnobInput extends Component {
           className="knob-input__visual"
           style={{ maxHeight: 200, zIndex: 2 }}
           viewBox="0 0 40 40"
+          ref={(e) => (this.dial = e)}
+          onMouseDown={this.onMouseDown}
         >
           <circle
             className="focus-indicator"
@@ -141,7 +196,7 @@ class KnobInput extends Component {
             stroke="#23292d"
           />
           <path className="indicator-ring" d="M20,20Z" fill="#4eccff" />
-          <g className="dial" ref={(e) => (this.dial = e)}>
+          <g className="dial">
             <circle cx="20" cy="20" r="16" fill="url(#grad-dial-soft-shadow)" />
             <ellipse
               cx="20"
@@ -200,16 +255,18 @@ class KnobInput extends Component {
 }
 
 KnobInput.propTypes = {
+  valueSnapping: PropTypes.bool,
   degreeRange: PropTypes.number,
   degreeOffset: PropTypes.number,
   step: PropTypes.number,
   divisions: PropTypes.number,
   min: PropTypes.number,
   max: PropTypes.number,
-  initValue: PropTypes.number
+  initialValue: PropTypes.number
 };
 
 KnobInput.defaultProps = {
+  initialValue: 0,
   degreeRange: 360,
   degreeOffset: 0,
   step: 1,
