@@ -20,8 +20,8 @@ const KnobNeedle = styled.circle.attrs({
       return (
         props.degreeOffset +
           (props.divisions > 1
-            ? props.getClosest(props.rangeValue)
-            : props.rangeValue) *
+            ? props.getClosest(props.value)
+            : props.value) *
             (props.degreeRange / 100 || 3.6) || 0
       );
     }}deg
@@ -62,13 +62,12 @@ const VerticalKnobRange = styled.input.attrs({ type: 'range' })`
 `;
 
 class KnobInput extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.scrolling = null;
   }
 
   state = {
-    rangeValue: this.props.initialValue || 0,
     dragging: false,
     dragPosition: {
       x: 0,
@@ -97,47 +96,43 @@ class KnobInput extends Component {
   };
 
   onMouseMove = (e) => {
-    const { dragging, dragPosition, rangeValue } = this.state;
-    const { min, max } = this.props;
+    const { dragging, dragPosition } = this.state;
+    const { onChange, min, max, value } = this.props;
     const oldDragAmount = { ...dragPosition };
 
     if (!dragging) return;
 
-    let dragAmount = rangeValue + oldDragAmount.y - e.pageY;
+    let dragAmount = value + oldDragAmount.y - e.pageY;
     if (dragAmount > max) dragAmount = max;
     else if (dragAmount < min) dragAmount = min;
 
-    this.setState({ dragPosition: { x: e.pageX, y: e.pageY }, rangeValue: dragAmount });
+    this.setState({ dragPosition: { x: e.pageX, y: e.pageY } });
+    onChange(dragAmount);
   };
 
   onMouseUp = () => {
-    const { initialValue, valueSnapping } = this.props;
-    const updateObject = { dragging: false };
+    const { initialValue, valueSnapping, onChange } = this.props;
 
-    if (valueSnapping) updateObject.rangeValue = initialValue;
-
-    this.setState(updateObject);
+    this.setState({ dragging: false });
+    if (valueSnapping) onChange(initialValue);
   };
 
   updateOnScroll = (e) => {
-    const { initialValue, max, min } = this.props;
+    const { onChange, initialValue, max, min, value, valueSnapping } = this.props;
     clearTimeout(this.scrolling);
     this.range.focus();
-    this.setState((state) => {
-      let newValue = state.rangeValue + e.deltaY / 4;
 
-      if (newValue > max) newValue = max;
-      else if (newValue < min) newValue = min;
+    let newValue = value + e.deltaY / 4;
 
-      return { rangeValue: newValue };
-    }, () => {
-      this.scrolling = setTimeout(() => this.setState({ rangeValue: initialValue }), 100);
-    });
+    if (newValue > max) newValue = max;
+    else if (newValue < min) newValue = min;
+    onChange(newValue);
+    this.scrolling = valueSnapping ? setTimeout(() => onChange(initialValue), 100) : null;
   };
 
-  onChange(e) {
-    this.setState({ rangeValue: e.target.value });
-  }
+  onChange = (e) => {
+    this.props.onChange(e);
+  };
 
   getClosest = (value) => {
     const { divisions, max } = this.props;
@@ -166,8 +161,16 @@ class KnobInput extends Component {
   };
 
   render() {
-    const { degreeOffset, degreeRange, divisions, min, max, step } = this.props;
-    const { rangeValue } = this.state;
+    const {
+      degreeOffset,
+      degreeRange,
+      divisions,
+      min,
+      max,
+      step,
+      value
+    } = this.props;
+    // const { rangeValue } = this.state;
 
     return (
       <KnobWrapper>
@@ -231,7 +234,7 @@ class KnobInput extends Component {
             />
             <KnobNeedle
               className="indicator-dot"
-              rangeValue={rangeValue}
+              value={value}
               divisions={divisions}
               degreeOffset={degreeOffset}
               degreeRange={degreeRange}
@@ -242,7 +245,7 @@ class KnobInput extends Component {
         <VerticalKnobRange
           onChange={(e) => this.onChange(e)}
           innerRef={(e) => (this.range = e)}
-          value={rangeValue || 0}
+          value={value || 0}
           min={min}
           max={max}
           step={step}
@@ -262,7 +265,9 @@ KnobInput.propTypes = {
   divisions: PropTypes.number,
   min: PropTypes.number,
   max: PropTypes.number,
-  initialValue: PropTypes.number
+  initialValue: PropTypes.number,
+  value: PropTypes.number,
+  onChange: PropTypes.func
 };
 
 KnobInput.defaultProps = {
@@ -272,7 +277,8 @@ KnobInput.defaultProps = {
   step: 1,
   divisions: 1,
   min: 0,
-  max: 100
+  max: 100,
+  value: 0
 };
 
 export default KnobInput;
