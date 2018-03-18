@@ -62,8 +62,8 @@ const VerticalKnobRange = styled.input.attrs({ type: 'range' })`
 `;
 
 class KnobInput extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.scrolling = null;
   }
 
@@ -179,7 +179,7 @@ class KnobInput extends Component {
           className="knob-input__visual"
           style={{ maxHeight: 200, zIndex: 2 }}
           viewBox="0 0 40 40"
-          ref={(e) => (this.dial = e)}
+          ref={(e) => this.dial = e}
           onMouseDown={this.onMouseDown}
         >
           <circle

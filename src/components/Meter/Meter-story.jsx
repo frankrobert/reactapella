@@ -31,6 +31,7 @@ class MeterWithKnob extends Component {
     ];
   }
 }
+
 MeterWithKnob.propTypes = {
   initialValue: PropTypes.number
 };
@@ -45,12 +46,4 @@ stories
   .add('with default values', () => <Meter />)
   .add('with 50% meter', () => <Meter value={number('Value', 50)} />)
   .add('vertical', () => <Meter vertical={boolean('Vertical', true)} />)
-  .add('controlled with knob', () => <MeterWithKnob />)
-  .add('test', () => {
-    return (
-      <>
-        <p>Hello</p>
-        <p>Goodbye</p>
-      </>
-    );
-  });
+  .add('controlled with knob', () => <MeterWithKnob />);
