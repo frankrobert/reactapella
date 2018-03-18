@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
+import centered from '@storybook/addon-centered';
 import { withKnobs, number, boolean } from '@storybook/addon-knobs/react';
 import Meter from './Meter';
 import Knob from '../Knob/Knob';
-
-const stories = storiesOf('Meters', module);
 
 class MeterWithKnob extends Component {
   state = {
@@ -26,8 +25,9 @@ class MeterWithKnob extends Component {
         degreeOffset={number('Degree Offset', 45)}
         divisions={number('Divisions', 6)}
         onChange={this.onChange}
+        key="knob"
       />,
-      <Meter value={value} />
+      <Meter value={value} key="meter" optimum={12} />
     ];
   }
 }
@@ -40,7 +40,12 @@ MeterWithKnob.defaultProps = {
   initialValue: 0
 };
 
-stories.addDecorator(withKnobs);
+const stories = storiesOf('Meters', module);
+
+
+stories
+  .addDecorator(withKnobs)
+  .addDecorator(centered);
 
 stories
   .add('with default values', () => <Meter />)

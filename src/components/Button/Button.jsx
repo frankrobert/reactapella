@@ -1,19 +1,27 @@
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 
 const Button = styled.button`
-  border: 1px solid #eee;
-  border-radius: 3px;
-  background-color: ${(props) => (props.primary ? 'rebeccapurple' : 'white')};
-  color: ${(props) => (props.primary ? 'white' : 'black')};
+  width: 200px;
+  height: 200px;
+  color: #fff;
+  border: 2px solid #222;
+  border-radius: 25px;
+  background-color: #7a2e48;
   cursor: pointer;
-  font-size: 15px;
-  padding: 3px 10px;
-  margin: 10px;
-`;
+  transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-Button.propTypes = {
-  primary: PropTypes.bool
-};
+  &:hover {
+    box-shadow: 0px 0px 20px 0px #63535b;
+    transform: scale(1.01, 1.01);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    box-shadow: inset 0px 0px 12px 3px #63535b;
+  }
+`;
 
 export default Button;
