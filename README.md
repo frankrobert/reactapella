@@ -18,5 +18,5 @@ For the time being this will be a place to create all of the atomic-level compon
 
 - Components can be found under `/src/components`
 - Stories can be found next to their respective component
-  - `/src/components/Button/Button.jsx`
+  - `/src/components/Button/Button.js`
   - `/src/components/Button/Button-story.jsx`
