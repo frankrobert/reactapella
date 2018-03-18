@@ -5,16 +5,16 @@ import styled from 'styled-components';
 const Slider = styled.div`
   ${(props) =>
     props.toggled
-      ? 'background: green;'
-      : 'background: red;'} border: 2px solid #444;
+      ? 'background: #629b89;'
+      : 'background: #7a2e48;'} border: 2px solid #222;
   height: 40px;
   width: 130px;
   border-radius: 20px;
   position: relative;
   transition: 0.3s ease-in;
-  &:hover {
-    box-shadow: 2px 2px 7px 1px rgba(68, 68, 68, 0.62);
+  box-shadow: 0px 0px 20px 0px #63535b;
 
+  &:hover {
     & > div {
       ${(props) =>
         props.toggled
@@ -26,7 +26,7 @@ const Slider = styled.div`
 
 const Button = styled.div`
   background-color: #fff;
-  border: 2px solid #444;
+  border: 2px solid #222;
   width: 35px;
   height: 35px;
   border-radius: 20px;
@@ -36,7 +36,8 @@ const Button = styled.div`
   ${(props) =>
     props.toggled
       ? 'transform: translate(200%, -50%);'
-      : 'transform: translate(0, -50%);'} transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      : 'transform: translate(0, -50%);'}
+  transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 `;
 
 class Toggle extends Component {

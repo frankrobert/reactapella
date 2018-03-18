@@ -1,12 +1,15 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, number, boolean } from '@storybook/addon-knobs/react';
+import centered from '@storybook/addon-centered';
 import Knob from './Knob';
 import WithValueControl from '../../HOC/WithValueControl/WithValueControl';
 
 const stories = storiesOf('Knobs', module);
 
-stories.addDecorator(withKnobs);
+stories
+  .addDecorator(withKnobs)
+  .addDecorator(centered);
 
 stories
   .add('with default values', () => (

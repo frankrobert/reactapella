@@ -5,58 +5,60 @@ import PropTypes from 'prop-types';
 
 const KnobWrapper = styled.div`
   max-height: ${({ size }) => size || 200}px;
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  border: 2px solid #222;
+  background-color: #B8BC9E;
   position: relative;
-`;
-
-const KnobNeedle = styled.circle.attrs({
-  cx: '20',
-  cy: '30',
-  r: '1.5',
-  fill: '#4eccff'
-})`
-  transform-origin: 20px 20px 0;
+  box-shadow: 0px 0px 20px 0px #63535b;
   transform: rotate(
     ${(props) => {
       return (
         props.degreeOffset +
-          (props.divisions > 1 ? props.getClosest(props.value) : props.value) *
-            (props.degreeRange / 100 || 3.6) || 0
+        (props.divisions > 1 ? props.getClosest(props.value) : props.value) *
+        (props.degreeRange / 100 || 3.6) + 180 || -180
       );
     }}deg
   );
+  ${(props) => {
+    return !props.isDragging && !props.isScrolling && props.valueSnapping
+      ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+      : 'transition: null'
+    }
+  };
 `;
 
-const KnobStyles = (
-  <svg className="defs" style={{ position: 'absolute' }}>
-    <defs>
-      <radialGradient id="grad-dial-soft-shadow" cx="0.5" cy="0.5" r="0.5">
-        <stop offset="85%" stopColor="#242a2e" stopOpacity="0.4" />
-        <stop offset="100%" stopColor="#242a2e" stopOpacity="0" />
-      </radialGradient>
-      <linearGradient id="grad-dial-base" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#52595f" />
-        <stop offset="100%" stopColor="#2b3238" />
-      </linearGradient>
-      <linearGradient id="grad-dial-highlight" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#70777d" stopOpacity="1" />
-        <stop offset="40%" stopColor="#70777d" stopOpacity="0" />
-        <stop offset="55%" stopColor="#70777d" stopOpacity="0" />
-        <stop offset="100%" stopColor="#70777d" stopOpacity="0.3" />
-      </linearGradient>
-      <filter id="glow">
-        <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="2" />
-        <feComposite in="blur" in2="SourceGraphic" operator="over" />
-      </filter>
-    </defs>
-  </svg>
-);
+const InnerDial = styled.div`
+  height: 180px;
+  width: 180px;
+  border-radius: 50%;
+  border: 2px solid #222;
+  background-color: #629B89;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+`;
 
-const VerticalKnobRange = styled.input.attrs({ type: 'range' })`
+const Dot = styled.div`
+  background-color: #fff;
+  border: 2px solid #222;
+  border-radius: 50%;
+  height: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  width: 10px;
+`;
+
+const Range = styled.input.attrs({ type: 'range' })`
   transform: translate(-50%, -50%) rotate(-90deg);
   position: absolute;
   left: 50%;
   top: 50%;
   z-index: -1;
+  visibility: hidden;
 `;
 
 class KnobInput extends Component {
@@ -66,44 +68,44 @@ class KnobInput extends Component {
   }
 
   state = {
-    dragging: false,
+    isScrolling: false,
+    isDragging: false,
     dragPosition: {
       x: 0,
       y: 0
     }
   };
 
-  componentDidMount() {
-    this.dial.addEventListener('wheel', this.updateOnScroll);
-  }
+  // componentDidMount() {
+  //   this.dial.addEventListener('wheel', this.updateOnScroll);
+  // }
 
   componentDidUpdate(prevProps, prevState) {
-    const { dragging } = this.state;
-    if (dragging && !prevState.dragging) {
+    const { isDragging } = this.state;
+    if (isDragging && !prevState.isDragging) {
       document.addEventListener('mousemove', this.onMouseMove);
       document.addEventListener('mouseup', this.onMouseUp);
-    } else if (!this.state.dragging && prevState.dragging) {
+    } else if (!isDragging && prevState.isDragging) {
       document.removeEventListener('mousemove', this.onMouseMove);
       document.removeEventListener('mouseup', this.onMouseUp);
     }
   }
 
   onMouseDown = (e) => {
-    const offset = this.dial.getBoundingClientRect();
     this.setState({
-      dragging: true,
-      dragPosition: { x: e.pageX - offset.left, y: e.pageY - offset.top }
+      isDragging: true,
+      dragPosition: { x: e.pageX, y: e.pageY }
     });
   };
 
   onMouseMove = (e) => {
-    const { dragging, dragPosition } = this.state;
+    const { isDragging, dragPosition } = this.state;
     const { onChange, min, max, value } = this.props;
-    const oldDragAmount = { ...dragPosition };
+    const oldDragValue = { ...dragPosition }; // Clone drag
 
-    if (!dragging) return;
+    if (!isDragging) return;
 
-    let dragAmount = value + oldDragAmount.y - e.pageY;
+    let dragAmount = value + oldDragValue.y - e.pageY;
     if (dragAmount > max) dragAmount = max;
     else if (dragAmount < min) dragAmount = min;
 
@@ -114,7 +116,7 @@ class KnobInput extends Component {
   onMouseUp = () => {
     const { initialValue, valueSnapping, onChange } = this.props;
 
-    this.setState({ dragging: false });
+    this.setState({ isDragging: false });
     if (valueSnapping) onChange(initialValue);
   };
 
@@ -127,7 +129,10 @@ class KnobInput extends Component {
       value,
       valueSnapping
     } = this.props;
+    e.preventDefault();
+    e.stopPropagation();
     clearTimeout(this.scrolling);
+    this.setState({ isScrolling: true });
     this.range.focus();
 
     let newValue = value + e.deltaY / 4;
@@ -136,7 +141,10 @@ class KnobInput extends Component {
     else if (newValue < min) newValue = min;
     onChange(newValue);
     this.scrolling = valueSnapping
-      ? setTimeout(() => onChange(initialValue), 100)
+      ? setTimeout(() => {
+        this.setState({ isScrolling: false });
+        onChange(initialValue);
+      }, 100)
       : null;
   };
 
@@ -178,81 +186,29 @@ class KnobInput extends Component {
       min,
       max,
       step,
-      value
+      value,
+      valueSnapping
     } = this.props;
-    // const { rangeValue } = this.state;
+    const { isDragging, isScrolling } = this.state;
 
     return (
-      <KnobWrapper>
-        {KnobStyles}
-        <svg
-          className="knob-input__visual"
-          style={{ maxHeight: 200, zIndex: 2 }}
-          viewBox="0 0 40 40"
-          ref={(e) => (this.dial = e)}
-          onMouseDown={this.onMouseDown}
-        >
-          <circle
-            className="focus-indicator"
-            cx="20"
-            cy="20"
-            r="18"
-            fill="#4eccff"
-            filter="url(#glow)"
-          />
-          <circle
-            className="indicator-ring-bg"
-            cx="20"
-            cy="20"
-            r="18"
-            fill="#353b3f"
-            stroke="#23292d"
-          />
-          <path className="indicator-ring" d="M20,20Z" fill="#4eccff" />
-          <g className="dial">
-            <circle cx="20" cy="20" r="16" fill="url(#grad-dial-soft-shadow)" />
-            <ellipse
-              cx="20"
-              cy="22"
-              rx="14"
-              ry="14.5"
-              fill="#242a2e"
-              opacity="0.15"
-            />
-            <circle
-              cx="20"
-              cy="20"
-              r="14"
-              fill="url(#grad-dial-base)"
-              stroke="#242a2e"
-              strokeWidth="1.5"
-            />
-            <circle
-              cx="20"
-              cy="20"
-              r="13"
-              fill="transparent"
-              stroke="url(#grad-dial-highlight)"
-              strokeWidth="1.5"
-            />
-            <circle
-              className="dial-highlight"
-              cx="20"
-              cy="20"
-              r="14"
-              fill="#ffffff"
-            />
-            <KnobNeedle
-              className="indicator-dot"
-              value={value}
-              divisions={divisions}
-              degreeOffset={degreeOffset}
-              degreeRange={degreeRange}
-              getClosest={this.getClosest}
-            />
-          </g>
-        </svg>
-        <VerticalKnobRange
+      <KnobWrapper
+        degreeOffset={degreeOffset}
+        degreeRange={degreeRange}
+        value={value}
+        divisions={divisions}
+        onWheel={this.updateOnScroll}
+        isDragging={isDragging}
+        isScrolling={isScrolling}
+        innerRef={(e) => (this.dial = e)}
+        onMouseDown={this.onMouseDown}
+        getClosest={this.getClosest}
+        valueSnapping={valueSnapping}
+      >
+        <InnerDial>
+          <Dot />
+        </InnerDial>
+        <Range
           onChange={(e) => this.onChange(e)}
           innerRef={(e) => (this.range = e)}
           value={value || 0}
