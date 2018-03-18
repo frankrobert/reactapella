@@ -26,17 +26,20 @@ stories
   ))
   .add('with limited range', () => (
     <WithValueControl>
-      <Knob degreeRange={number('Degree Range', 180)} degreeOffset={number('Degree Offset', 90)} />
+      <Knob
+        degreeRange={number('Degree Range', 180)}
+        degreeOffset={number('Degree Offset', 90)}
+      />
     </WithValueControl>
   ))
   .add('with initialized value', () => (
     <WithValueControl initialValue={number('Initial Value', 50)}>
-      <Knob/>
+      <Knob />
     </WithValueControl>
   ))
   .add('with value snapping', () => (
     <WithValueControl initialValue={number('Initial Value', 50)}>
-      <Knob valueSnapping={boolean('Value Snapping', true)}/>
+      <Knob valueSnapping={boolean('Value Snapping', true)} />
     </WithValueControl>
   ))
   .add('side by side', () => (

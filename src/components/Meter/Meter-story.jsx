@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, number, boolean } from '@storybook/addon-knobs/react';
 import Meter from './Meter';
-import Knob from "../Knob/Knob";
+import Knob from '../Knob/Knob';
 
 const stories = storiesOf('Meters', module);
 

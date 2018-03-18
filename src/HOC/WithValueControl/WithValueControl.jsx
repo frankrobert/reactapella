@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { getDisplayName } from '../../lib/helpers'
+import { getDisplayName } from '../../lib/helpers';
 
 class WithValueControl extends Component {
   state = {
@@ -19,13 +19,16 @@ class WithValueControl extends Component {
 
   render() {
     const { value } = this.state;
-    const childrenWithExtraProp = React.Children.map(this.props.children, child => {
-      return React.cloneElement(child, {
-        value,
-        initialValue: this.props.initialValue,
-        onChange: this.onChange
-      });
-    });
+    const childrenWithExtraProp = React.Children.map(
+      this.props.children,
+      (child) => {
+        return React.cloneElement(child, {
+          value,
+          initialValue: this.props.initialValue,
+          onChange: this.onChange
+        });
+      }
+    );
 
     return childrenWithExtraProp;
   }
@@ -33,6 +36,6 @@ class WithValueControl extends Component {
 
 WithValueControl.defaultProps = {
   initialValue: 0
-}
+};
 
 export default WithValueControl;

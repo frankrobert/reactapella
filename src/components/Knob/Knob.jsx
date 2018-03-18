@@ -19,9 +19,7 @@ const KnobNeedle = styled.circle.attrs({
     ${(props) => {
       return (
         props.degreeOffset +
-          (props.divisions > 1
-            ? props.getClosest(props.value)
-            : props.value) *
+          (props.divisions > 1 ? props.getClosest(props.value) : props.value) *
             (props.degreeRange / 100 || 3.6) || 0
       );
     }}deg
@@ -92,7 +90,10 @@ class KnobInput extends Component {
 
   onMouseDown = (e) => {
     const offset = this.dial.getBoundingClientRect();
-    this.setState({ dragging: true, dragPosition: { x: e.pageX - offset.left, y: e.pageY - offset.top }});
+    this.setState({
+      dragging: true,
+      dragPosition: { x: e.pageX - offset.left, y: e.pageY - offset.top }
+    });
   };
 
   onMouseMove = (e) => {
@@ -118,7 +119,14 @@ class KnobInput extends Component {
   };
 
   updateOnScroll = (e) => {
-    const { onChange, initialValue, max, min, value, valueSnapping } = this.props;
+    const {
+      onChange,
+      initialValue,
+      max,
+      min,
+      value,
+      valueSnapping
+    } = this.props;
     clearTimeout(this.scrolling);
     this.range.focus();
 
@@ -127,7 +135,9 @@ class KnobInput extends Component {
     if (newValue > max) newValue = max;
     else if (newValue < min) newValue = min;
     onChange(newValue);
-    this.scrolling = valueSnapping ? setTimeout(() => onChange(initialValue), 100) : null;
+    this.scrolling = valueSnapping
+      ? setTimeout(() => onChange(initialValue), 100)
+      : null;
   };
 
   onChange = (e) => {
@@ -179,7 +189,7 @@ class KnobInput extends Component {
           className="knob-input__visual"
           style={{ maxHeight: 200, zIndex: 2 }}
           viewBox="0 0 40 40"
-          ref={(e) => this.dial = e}
+          ref={(e) => (this.dial = e)}
           onMouseDown={this.onMouseDown}
         >
           <circle
