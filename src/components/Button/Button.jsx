@@ -8,6 +8,7 @@ const Button = styled.button`
   border-radius: 25px;
   background-color: #7a2e48;
   cursor: pointer;
+  position: relative;
   transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
   &:hover {
