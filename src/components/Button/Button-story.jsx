@@ -12,7 +12,7 @@ stories
   .addDecorator(centered);
 
 stories
-  .add('with emojis', () => (
+  .add('with a label', () => (
     <Button>
       {text('Label', 'This is a button label')}
     </Button>
