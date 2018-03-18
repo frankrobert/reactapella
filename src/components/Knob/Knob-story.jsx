@@ -1,46 +1,10 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
 import { withKnobs, number, boolean } from '@storybook/addon-knobs/react';
 import Knob from './Knob';
-import withValueControl from '../../HOC/WithValueControl/WithValueControl';
 import WithValueControl from '../../HOC/WithValueControl/WithValueControl';
 
 const stories = storiesOf('Knobs', module);
-
-stories.addDecorator(withKnobs);
-
-// class MeterWithKnob extends Component {
-//   state = {
-//     value: this.props.initialValue
-//   };
-
-//   onChange = (value) => {
-//     this.setState({ value });
-//   };
-
-//   render() {
-//     const { value } = this.state;
-
-//     return (
-//       <Knob
-//         value={value}
-//         degreeRange={number('Degree Range', 270)}
-//         degreeOffset={number('Degree Offset', 45)}
-//         divisions={number('Divisions', 6)}
-//         onChange={this.onChange}
-//       />
-//     );
-//   }
-// }
-
-// MeterWithKnob.propTypes = {
-//   initialValue: PropTypes.number
-// };
-
-// MeterWithKnob.defaultProps = {
-//   initialValue: 0
-// };
 
 stories.addDecorator(withKnobs);
 
