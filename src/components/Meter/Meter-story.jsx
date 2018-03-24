@@ -73,7 +73,7 @@ class MeterWithAudio extends Component {
       this.setState({ value: average });
     };
     this.meter.connect(this.context.connectNode);
-      
+
     this.context.audioSource.connect(this.analyser);
     this.analyser.connect(this.meter);
     this.context.audioSource.connect(this.context.connectNode);
@@ -97,15 +97,7 @@ class MeterWithAudio extends Component {
     const { value } = this.state;
 
     return (
-      <div>
-        <Knob
-          value={value}
-          degreeRange={number('Degree Range', 270)}
-          degreeOffset={number('Degree Offset', 45)}
-          onChange={this.onChange}
-        />
-        <Meter value={value} />
-      </div>
+      <Meter value={value} />
     );
   }
 };
