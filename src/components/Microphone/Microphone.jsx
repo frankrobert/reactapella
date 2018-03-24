@@ -59,7 +59,11 @@ class Microphone extends Component {
             optional: []
           }
         },
-        (stream) => this.setState({ audioSource: stream }),
+        (stream) => {
+          const audioSource = this.context.audioContext.createMediaStreamSource(stream);
+
+          this.setState({ audioSource })
+        },
         () => console.log('No stream found.')
       );
     } catch (e) {

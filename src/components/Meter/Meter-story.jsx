@@ -44,12 +44,67 @@ MeterWithKnob.defaultProps = {
 
 // eslint-disable-next-line
 class MeterWithAudio extends Component {
+  state = {
+    value: 0
+  };
+
+  componentDidMount() {
+    this.setupNodes();
+  }
+
+  setupNodes = () => {
+    if (!this.context.audioSource) {
+      return setTimeout(this.setupNodes, 50);
+    }
+
+    this.analyser = this.context.audioContext.createAnalyser();
+    this.analyser.smoothingTimeConstant = 0.3;
+    this.analyser.fftSize = 1024;
+
+    this.meter = this.context.audioContext.createScriptProcessor(2048, 1, 1);
+    this.meter.onaudioprocess = () => {
+      // get the average, bincount is fftsize / 2
+      const array =  new Uint8Array(this.analyser.frequencyBinCount);
+  
+      this.analyser.getByteFrequencyData(array);
+  
+      const average = this.getAverageVolume(array)
+
+      this.setState({ value: average });
+    };
+    this.meter.connect(this.context.connectNode);
+      
+    this.context.audioSource.connect(this.analyser);
+    this.analyser.connect(this.meter);
+    this.context.audioSource.connect(this.context.connectNode);
+  };
+
+  getAverageVolume = (array) => {
+    const { length } = array;
+    let values = 0;
+
+    // get all the frequency amplitudes
+    for (let i = 0; i < length; i++) { // eslint-disable-line
+        values += array[i];
+    }
+
+    const average = values / length;
+
+    return average;
+  };
+
   render() {
+    const { value } = this.state;
+
     return (
       <div>
-        <p>Context:</p>
-        <p>{Object.keys(this.context).toString()}</p>
-        <MeterWithKnob />
+        <Knob
+          value={value}
+          degreeRange={number('Degree Range', 270)}
+          degreeOffset={number('Degree Offset', 45)}
+          onChange={this.onChange}
+        />
+        <Meter value={value} />
       </div>
     );
   }
