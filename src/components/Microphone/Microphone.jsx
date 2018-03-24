@@ -37,7 +37,6 @@ class Microphone extends Component {
   }
 
   getMicrophoneStream = () => {
-    console.log('try to get audio stream');
     // Attempt to get audio input
     try {
       // monkeypatch getUserMedia
