@@ -26,16 +26,18 @@ class Meter extends Component {
 
   componentDidMount() {
     if (!this.ctx) this.ctx = this.canvas.getContext('2d');
-    this.updateMeter(this.props.value);
+    window.requestAnimationFrame(this.updateMeter);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.props.value) {
-      this.updateMeter(nextProps.value);
+      window.requestAnimationFrame(this.updateMeter);
     }
   }
 
-  updateMeter = (value) => {
+  updateMeter = () => {
+    const { value } = this.props;
+
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.strokeRect(0, 0, this.width, this.height);
     this.ctx.fillStyle = 'green';

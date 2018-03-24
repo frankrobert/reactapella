@@ -8,21 +8,6 @@ import AudioContext from '../AudioContext/Audio-Context';
 import AudioSource from '../AudioSource/AudioSource';
 import Knob from '../Knob/Knob';
 
-const Test = (props, context) => {
-  return (
-    <div>
-      <p>Context:</p>
-      <p>{Object.keys(context).toString()}</p>
-    </div>
-  );
-};
-
-Test.contextTypes = {
-  audioContext: PropTypes.object,
-  connectNode: PropTypes.object,
-  audioSource: PropTypes.object
-};
-
 class MeterWithKnob extends Component {
   state = {
     value: this.props.initialValue
@@ -57,6 +42,25 @@ MeterWithKnob.defaultProps = {
   initialValue: 0
 };
 
+// eslint-disable-next-line
+class MeterWithAudio extends Component {
+  render() {
+    return (
+      <div>
+        <p>Context:</p>
+        <p>{Object.keys(this.context).toString()}</p>
+        <MeterWithKnob />
+      </div>
+    );
+  }
+};
+
+MeterWithAudio.contextTypes = {
+  audioContext: PropTypes.object,
+  connectNode: PropTypes.object,
+  audioSource: PropTypes.object
+};
+
 const stories = storiesOf('Meters', module);
 
 stories.addDecorator(withKnobs).addDecorator(centered);
@@ -69,8 +73,7 @@ stories
   .add('with Audio input', () => (
     <AudioContext>
       <AudioSource source="microphone">
-        <Meter />
-        <Test />
+        <MeterWithAudio />
       </AudioSource>
     </AudioContext>
   ));
