@@ -49,7 +49,6 @@ class MeterWithAudio extends Component {
   };
 
   componentDidMount() {
-    console.log('MeterWithAudio PROPS: ', this.props);
     this.setupNodes();
   }
 
@@ -65,11 +64,11 @@ class MeterWithAudio extends Component {
     this.meter = this.props.audioContext.createScriptProcessor(2048, 1, 1);
     this.meter.onaudioprocess = () => {
       // get the average, bincount is fftsize / 2
-      const array =  new Uint8Array(this.analyser.frequencyBinCount);
-  
+      const array = new Uint8Array(this.analyser.frequencyBinCount);
+
       this.analyser.getByteFrequencyData(array);
-  
-      const average = this.getAverageVolume(array)
+
+      const average = this.getAverageVolume(array);
 
       this.setState({ value: average });
     };
@@ -85,9 +84,7 @@ class MeterWithAudio extends Component {
     let values = 0;
 
     // get all the frequency amplitudes
-    for (let i = 0; i < length; i++) { // eslint-disable-line
-        values += array[i];
-    }
+    array.forEach((value) => (values += value)); // eslint-disable-line
 
     const average = values / length;
 
@@ -97,11 +94,9 @@ class MeterWithAudio extends Component {
   render() {
     const { value } = this.state;
 
-    return (
-      <Meter value={value} />
-    );
+    return <Meter value={value} />;
   }
-};
+}
 
 MeterWithAudio.propTypes = {
   audioContext: PropTypes.object.isRequired,
@@ -120,7 +115,7 @@ stories
   .add('controlled with knob', () => <MeterWithKnob />)
   .add('with Audio input', () => (
     <AudioContext>
-      <AudioSource source={text('Source', "microphone")}>
+      <AudioSource source={text('Source', 'microphone')}>
         <MeterWithAudio />
       </AudioSource>
     </AudioContext>

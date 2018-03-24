@@ -19,16 +19,13 @@ class WithValueControl extends Component {
 
   render() {
     const { value } = this.state;
-    const children = React.Children.map(
-      this.props.children,
-      (child) => {
-        return React.cloneElement(child, {
-          value,
-          initialValue: this.props.initialValue,
-          onChange: this.onChange
-        });
-      }
-    );
+    const children = React.Children.map(this.props.children, (child) => {
+      return React.cloneElement(child, {
+        value,
+        initialValue: this.props.initialValue,
+        onChange: this.onChange
+      });
+    });
 
     return children;
   }

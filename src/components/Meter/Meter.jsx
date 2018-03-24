@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const Canvas = styled.canvas.attrs({ width: (props) => props.width, height: (props) => props.height })`
+const Canvas = styled.canvas.attrs({
+  width: (props) => props.width,
+  height: (props) => props.height
+})`
   ${(props) => (props.vertical ? 'transform: rotate(90deg)' : '')};
 `;
 
@@ -52,7 +55,7 @@ class Meter extends Component {
         width={this.width}
         height={this.height}
         vertical={vertical}
-        innerRef={(e) => this.canvas = e} // eslint-disable-line
+        innerRef={(e) => (this.canvas = e)} // eslint-disable-line
       />
     );
   }

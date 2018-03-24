@@ -4,7 +4,7 @@ import Microphone from '../Microphone/Microphone';
 
 const AudioSource = ({ children, source, ...rest }) => {
   if (source === 'microphone') {
-    return <Microphone {...rest} >{children}</Microphone>;
+    return <Microphone {...rest}>{children}</Microphone>;
   }
 
   return children;
