@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { storiesOf } from '@storybook/react';
 import centered from '@storybook/addon-centered';
-import { withKnobs, number, boolean } from '@storybook/addon-knobs/react';
+import { withKnobs, number, boolean, text } from '@storybook/addon-knobs/react';
 import Meter from './Meter';
-import AudioContext from '../AudioContext/Audio-Context';
+import AudioContext from '../AudioContext/AudioContext';
 import AudioSource from '../AudioSource/AudioSource';
 import Knob from '../Knob/Knob';
 
@@ -49,19 +49,20 @@ class MeterWithAudio extends Component {
   };
 
   componentDidMount() {
+    console.log('MeterWithAudio PROPS: ', this.props);
     this.setupNodes();
   }
 
   setupNodes = () => {
-    if (!this.context.audioSource) {
+    if (!this.props.audioSource) {
       return setTimeout(this.setupNodes, 50);
     }
 
-    this.analyser = this.context.audioContext.createAnalyser();
+    this.analyser = this.props.audioContext.createAnalyser();
     this.analyser.smoothingTimeConstant = 0.3;
     this.analyser.fftSize = 1024;
 
-    this.meter = this.context.audioContext.createScriptProcessor(2048, 1, 1);
+    this.meter = this.props.audioContext.createScriptProcessor(2048, 1, 1);
     this.meter.onaudioprocess = () => {
       // get the average, bincount is fftsize / 2
       const array =  new Uint8Array(this.analyser.frequencyBinCount);
@@ -72,11 +73,11 @@ class MeterWithAudio extends Component {
 
       this.setState({ value: average });
     };
-    this.meter.connect(this.context.connectNode);
+    this.meter.connect(this.props.audioDestination);
 
-    this.context.audioSource.connect(this.analyser);
+    this.props.audioSource.connect(this.analyser);
     this.analyser.connect(this.meter);
-    this.context.audioSource.connect(this.context.connectNode);
+    this.props.audioSource.connect(this.props.audioDestination);
   };
 
   getAverageVolume = (array) => {
@@ -102,10 +103,10 @@ class MeterWithAudio extends Component {
   }
 };
 
-MeterWithAudio.contextTypes = {
-  audioContext: PropTypes.object,
-  connectNode: PropTypes.object,
-  audioSource: PropTypes.object
+MeterWithAudio.propTypes = {
+  audioContext: PropTypes.object.isRequired,
+  audioDestination: PropTypes.object.isRequired,
+  audioSource: PropTypes.object.isRequired
 };
 
 const stories = storiesOf('Meters', module);
@@ -119,7 +120,7 @@ stories
   .add('controlled with knob', () => <MeterWithKnob />)
   .add('with Audio input', () => (
     <AudioContext>
-      <AudioSource source="microphone">
+      <AudioSource source={text('Source', "microphone")}>
         <MeterWithAudio />
       </AudioSource>
     </AudioContext>

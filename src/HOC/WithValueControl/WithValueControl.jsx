@@ -19,7 +19,7 @@ class WithValueControl extends Component {
 
   render() {
     const { value } = this.state;
-    const childrenWithExtraProp = React.Children.map(
+    const children = React.Children.map(
       this.props.children,
       (child) => {
         return React.cloneElement(child, {
@@ -30,7 +30,7 @@ class WithValueControl extends Component {
       }
     );
 
-    return childrenWithExtraProp;
+    return children;
   }
 }
 

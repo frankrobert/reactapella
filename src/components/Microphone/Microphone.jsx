@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class Microphone extends Component {
@@ -6,37 +6,25 @@ class Microphone extends Component {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
-    ]).isRequired
+    ]).isRequired,
+    audioContext: PropTypes.object.isRequired
   };
-
-  static contextTypes = {
-    audioContext: PropTypes.object,
-    connectNode: PropTypes.object
-  };
-
-  static childContextTypes = {
-    audioContext: PropTypes.object,
-    connectNode: PropTypes.object,
-    audioSource: PropTypes.object
-  };
-
-  constructor(props) {
-    super(props);
-    this.getMicrophoneStream();
-  }
 
   state = {
     audioSource: null
   };
 
-  getChildContext() {
-    return {
-      ...this.context,
-      audioSource: this.state.audioSource
-    };
+  componentDidMount() {
+    this.getMicrophoneStream();
   }
 
   getMicrophoneStream = () => {
+    const { audioContext } = this.props;
+
+    if (!audioContext) {
+      return setTimeout(this.getMicrophoneStream, 50);
+    }
+
     // Attempt to get audio input
     try {
       // monkeypatch getUserMedia
@@ -50,7 +38,7 @@ class Microphone extends Component {
         {
           audio: {
             mandatory: {
-              googEchoCancellation: 'false',
+              googEchoCancellation: 'true',
               googAutoGainControl: 'false',
               googNoiseSuppression: 'false',
               googHighpassFilter: 'false'
@@ -59,9 +47,10 @@ class Microphone extends Component {
           }
         },
         (stream) => {
-          const audioSource = this.context.audioContext.createMediaStreamSource(stream);
+          console.log('MICROPHONE PROPS: ', this.props);
+          const audioSource = audioContext.createMediaStreamSource(stream);
 
-          this.setState({ audioSource })
+          this.setState({ audioSource });
         },
         () => console.log('No stream found.')
       );
@@ -71,7 +60,11 @@ class Microphone extends Component {
   };
 
   render() {
-    return this.props.children;
+    const children = React.Children.map(this.props.children, (child) => {
+      return React.cloneElement(child, { ...this.props, ...this.state });
+    });
+
+    return children;
   }
 }
 
