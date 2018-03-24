@@ -1,58 +1,59 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-const Meter = styled.meter.attrs({
-  min: 0,
-  max: 100,
-  low: (props) => props.low,
-  high: (props) => props.high,
-  value: (props) => props.value,
-  optimum: (props) => props.optimum
-})`
-  height: 50px;
-  width: 200px;
+const Canvas = styled.canvas.attrs({ width: (props) => props.width, height: (props) => props.height })`
   ${(props) => (props.vertical ? 'transform: rotate(90deg)' : '')};
-  & > * {
-    transition: background 0.3s ease-in-out;
-  }
-
-  &::-webkit-meter-bar {
-    border-radius: 25px;
-    background: #b8bc9e;
-    border: 2px solid #222;
-    box-shadow: 0px 0px 20px 0px #63535b;
-    position: relative;
-  }
-  &::-webkit-meter-optimum-value {
-    border-radius: 50px;
-    background: #629b89;
-    height: 40px;
-    width: 180px;
-    max-width: 180px;
-    margin: 5px;
-  }
-  &::-webkit-meter-suboptimum-value {
-    border-radius: 50px;
-    background: #fcd4a9;
-    height: 40px;
-    width: 180px;
-    max-width: 180px;
-    margin: 5px;
-  }
-  &::-webkit-meter-even-less-good-value {
-    border-radius: 50px;
-    background: #7a2e48;
-    height: 40px;
-    width: 180px;
-    max-width: 180px;
-    margin: 5px;
-  }
 `;
 
-Meter.defaultProps = {
-  optimum: 50,
-  low: 40,
-  high: 80,
-  vertical: false
-};
+class Meter extends Component {
+  static propTypes = {
+    value: PropTypes.number,
+    vertical: PropTypes.bool
+  };
+
+  static defaultProps = {
+    value: 0,
+    vertical: false
+  };
+
+  constructor(props) {
+    super(props);
+    this.ctx = null;
+    this.width = 300;
+    this.height = 50;
+  }
+
+  componentDidMount() {
+    if (!this.ctx) this.ctx = this.canvas.getContext('2d');
+    this.updateMeter(this.props.value);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.value !== this.props.value) {
+      this.updateMeter(nextProps.value);
+    }
+  }
+
+  updateMeter = (value) => {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.ctx.strokeRect(0, 0, this.width, this.height);
+    this.ctx.fillStyle = 'green';
+    this.ctx.fillRect(0, 0, value * (this.width / 100), this.height);
+  };
+
+  render() {
+    const { vertical } = this.props;
+
+    return (
+      <Canvas
+        width={this.width}
+        height={this.height}
+        vertical={vertical}
+        innerRef={(e) => this.canvas = e} // eslint-disable-line
+      />
+    );
+  }
+}
 
 export default Meter;

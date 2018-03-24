@@ -44,7 +44,7 @@ class MeterWithKnob extends Component {
         onChange={this.onChange}
         key="knob"
       />,
-      <Meter value={value} key="meter" optimum={12} />
+      <Meter value={value} key="meter" />
     ];
   }
 }
