@@ -60,11 +60,17 @@ class Microphone extends Component {
   };
 
   render() {
-    const children = React.Children.map(this.props.children, (child) => {
-      return React.cloneElement(child, { ...this.props, ...this.state });
+    const { children, ...rest } = this.props;
+    const { audioSource } = this.state;
+    const newElements = React.Children.map(children, (child) => {
+      return React.cloneElement(child, {
+        ...rest,
+        ...this.state,
+        currentNode: audioSource
+      });
     });
 
-    return children;
+    return newElements;
   }
 }
 
