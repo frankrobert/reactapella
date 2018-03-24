@@ -11,9 +11,7 @@ import Knob from '../Knob/Knob';
 const Test = (props, context) => {
   return (
     <div>
-      <p>
-        Context:
-      </p>
+      <p>Context:</p>
       <p>{Object.keys(context).toString()}</p>
     </div>
   );

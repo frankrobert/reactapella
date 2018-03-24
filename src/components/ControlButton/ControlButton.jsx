@@ -16,9 +16,7 @@ const ActiveText = styled.p`
 const ActiveState = styled.div`
   height: 30px;
   width: 30px;
-  background-color: ${(props) => props.isActive
-    ? '#629B89'
-    : '#FCD4A9'};
+  background-color: ${(props) => (props.isActive ? '#629B89' : '#FCD4A9')};
   border-radius: 50%;
   border: 2px solid #222;
   position: absolute;
@@ -33,32 +31,28 @@ const ActiveState = styled.div`
 class ControlButton extends Component {
   state = {
     isActive: false
-  }
+  };
 
   onClick = () => {
     const { mode } = this.props;
 
     this.setState((prevState) => ({
-      isActive: mode === 'toggle'
-      ? !prevState.isActive
-      : true
-    }))
-  }
+      isActive: mode === 'toggle' ? !prevState.isActive : true
+    }));
+  };
 
   onMouseUp = () => {
     const { mode } = this.props;
 
     if (mode === 'active') this.setState({ isActive: false });
-  }
+  };
 
   render() {
     const { isActive } = this.state;
 
     return (
       <Button onMouseDown={this.onClick} onMouseUp={this.onMouseUp}>
-        <ActiveText>
-          {isActive ? 'Active' : 'Inactive'}
-        </ActiveText>
+        <ActiveText>{isActive ? 'Active' : 'Inactive'}</ActiveText>
         <ActiveState isActive={isActive} />
       </Button>
     );
@@ -67,10 +61,10 @@ class ControlButton extends Component {
 
 ControlButton.propTypes = {
   mode: PropTypes.string
-}
+};
 
 ControlButton.defaultProps = {
   mode: 'toggle'
-}
+};
 
 export default ControlButton;

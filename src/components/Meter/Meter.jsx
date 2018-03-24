@@ -40,7 +40,7 @@ const Meter = styled.meter.attrs({
   }
   &::-webkit-meter-even-less-good-value {
     border-radius: 50px;
-    background: #7A2E48;
+    background: #7a2e48;
     height: 40px;
     width: 180px;
     max-width: 180px;

@@ -7,19 +7,11 @@ import ControlButton from '../ControlButton/ControlButton';
 
 const stories = storiesOf('Button', module);
 
-stories
-  .addDecorator(withKnobs)
-  .addDecorator(centered);
+stories.addDecorator(withKnobs).addDecorator(centered);
 
 stories
   .add('with a label', () => (
-    <Button>
-      {text('Label', 'This is a button label')}
-    </Button>
+    <Button>{text('Label', 'This is a button label')}</Button>
   ))
-  .add('with toggle state', () => (
-    <ControlButton mode='toggle' />
-  ))
-  .add('with active state', () => (
-    <ControlButton mode='active' />
-  ));
+  .add('with toggle state', () => <ControlButton mode="toggle" />)
+  .add('with active state', () => <ControlButton mode="active" />);

@@ -6,9 +6,7 @@ import Toggle from './Toggle';
 
 const stories = storiesOf('Toggle', module);
 
-stories
-.addDecorator(withKnobs)
-.addDecorator(centered);
+stories.addDecorator(withKnobs).addDecorator(centered);
 
 stories
   .add('with default values', () => <Toggle />)

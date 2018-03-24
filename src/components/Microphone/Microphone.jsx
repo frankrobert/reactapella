@@ -12,7 +12,7 @@ class Microphone extends Component {
   static contextTypes = {
     audioContext: PropTypes.object,
     connectNode: PropTypes.object
-  }
+  };
 
   static childContextTypes = {
     audioContext: PropTypes.object,
@@ -27,7 +27,7 @@ class Microphone extends Component {
 
   state = {
     audioSource: null
-  }
+  };
 
   getChildContext() {
     return {

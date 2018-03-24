@@ -16,7 +16,8 @@ class AudioContext extends Component {
 
   constructor() {
     super();
-    this.audioContext = new (window.AudioContext = window.AudioContext || window.webkitAudioContext)();
+    this.audioContext = new (window.AudioContext =
+      window.AudioContext || window.webkitAudioContext)();
   }
 
   getChildContext() {
