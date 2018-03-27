@@ -7,9 +7,7 @@ import WithValueControl from '../../HOC/WithValueControl/WithValueControl';
 
 const stories = storiesOf('Knobs', module);
 
-stories
-  .addDecorator(withKnobs)
-  .addDecorator(centered);
+stories.addDecorator(withKnobs).addDecorator(centered);
 
 stories
   .add('with default values', () => (

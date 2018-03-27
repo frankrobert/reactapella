@@ -9,24 +9,24 @@ const KnobWrapper = styled.div`
   width: 200px;
   border-radius: 50%;
   border: 2px solid #222;
-  background-color: #B8BC9E;
+  background-color: #b8bc9e;
   position: relative;
   box-shadow: 0px 0px 20px 0px #63535b;
   transform: rotate(
     ${(props) => {
       return (
         props.degreeOffset +
-        (props.divisions > 1 ? props.getClosest(props.value) : props.value) *
-        (props.degreeRange / 100 || 3.6) + 180 || -180
+          (props.divisions > 1 ? props.getClosest(props.value) : props.value) *
+            (props.degreeRange / 100 || 3.6) +
+          180 || -180
       );
     }}deg
   );
   ${(props) => {
     return !props.isDragging && !props.isScrolling && props.valueSnapping
       ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55)'
-      : 'transition: null'
-    }
-  };
+      : 'transition: null';
+  }};
 `;
 
 const InnerDial = styled.div`
@@ -34,7 +34,7 @@ const InnerDial = styled.div`
   width: 180px;
   border-radius: 50%;
   border: 2px solid #222;
-  background-color: #629B89;
+  background-color: #629b89;
   transform: translate(-50%, -50%);
   position: absolute;
   left: 50%;
@@ -142,9 +142,9 @@ class KnobInput extends Component {
     onChange(newValue);
     this.scrolling = valueSnapping
       ? setTimeout(() => {
-        this.setState({ isScrolling: false });
-        onChange(initialValue);
-      }, 100)
+          this.setState({ isScrolling: false });
+          onChange(initialValue);
+        }, 100)
       : null;
   };
 
