@@ -61,6 +61,7 @@ const Range = styled.input.attrs({ type: 'range' })`
   visibility: hidden;
 `;
 
+// TODO: Fix the initialValue states
 class KnobInput extends Component {
   constructor(props) {
     super(props);
@@ -75,10 +76,6 @@ class KnobInput extends Component {
       y: 0
     }
   };
-
-  // componentDidMount() {
-  //   this.dial.addEventListener('wheel', this.updateOnScroll);
-  // }
 
   componentDidUpdate(prevProps, prevState) {
     const { isDragging } = this.state;
