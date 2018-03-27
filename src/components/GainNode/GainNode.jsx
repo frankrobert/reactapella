@@ -47,7 +47,6 @@ class GainNode extends Component {
     const gainNode = audioContext.createGain();
 
     currentNode.connect(gainNode);
-    gainNode.connect(audioDestination);
     this.setState({ gainNode });
   };
 

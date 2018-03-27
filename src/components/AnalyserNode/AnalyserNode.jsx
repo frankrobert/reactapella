@@ -13,7 +13,8 @@ class AnalyserNode extends Component {
   };
 
   state = {
-    value: 0
+    value: 0,
+    audioDataNode: null
   };
 
   componentDidMount() {
@@ -32,9 +33,9 @@ class AnalyserNode extends Component {
     analyserNode.smoothingTimeConstant = 0.3;
     analyserNode.fftSize = 256;
 
-    const audioData = audioContext.createScriptProcessor(2048, 1, 1);
+    const audioDataNode = audioContext.createScriptProcessor(2048, 1, 1);
 
-    audioData.onaudioprocess = () => {
+    audioDataNode.onaudioprocess = () => {
       // get the average, bincount is fftsize / 2
       const analyserFreqArray = new Uint8Array(analyserNode.frequencyBinCount);
 
@@ -45,9 +46,11 @@ class AnalyserNode extends Component {
       this.setState({ value: average });
     };
 
-    audioData.connect(audioDestination);
+    this.setState({ audioDataNode });
+
     currentNode.connect(analyserNode);
-    analyserNode.connect(audioData);
+    analyserNode.connect(audioDataNode);
+    audioDataNode.connect(audioDestination);
   };
 
   getAverageVolume = (analyserFreqArray) => {
@@ -62,13 +65,13 @@ class AnalyserNode extends Component {
   };
 
   render() {
-    const { analyserNode, value } = this.state;
+    const { audioDataNode, value } = this.state;
     const { children, audioContext, currentNode, ...rest } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         value,
-        currentNode: analyserNode
+        currentNode: audioDataNode
       });
     });
 

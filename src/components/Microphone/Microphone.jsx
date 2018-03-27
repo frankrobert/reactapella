@@ -7,7 +7,8 @@ class Microphone extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
     ]).isRequired,
-    audioContext: PropTypes.object.isRequired
+    audioContext: PropTypes.object.isRequired,
+    audioDestination: PropTypes.object.isRequired
   };
 
   state = {

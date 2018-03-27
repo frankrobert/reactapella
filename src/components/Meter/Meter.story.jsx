@@ -6,6 +6,7 @@ import { withKnobs, number, boolean, text } from '@storybook/addon-knobs/react';
 import AudioContext from '../AudioContext/AudioContext';
 import AudioSource from '../AudioSource/AudioSource';
 import AnalyserNode from '../AnalyserNode/AnalyserNode';
+import Destination from '../Destination/Destination';
 import GainNode from '../GainNode/GainNode';
 import Meter from './Meter';
 import Knob from '../Knob/Knob';
@@ -57,14 +58,15 @@ stories
     <AudioContext>
       <AudioSource source={text('Source', 'microphone')}>
         <GainNode>
-          <AnalyserNode>
-            <Meter />
-          </AnalyserNode>
+          <Destination />
           <Knob
             initialValue={100}
             degreeRange={number('Degree Range #2', 180)}
             degreeOffset={number('Degree Offset #2', 90)}
           />
+          <AnalyserNode>
+            <Meter />
+          </AnalyserNode>
         </GainNode>
       </AudioSource>
     </AudioContext>
