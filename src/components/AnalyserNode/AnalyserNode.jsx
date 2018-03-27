@@ -14,7 +14,7 @@ class AnalyserNode extends Component {
 
   state = {
     value: 0,
-    audioDataNode: null
+    analyserNode: null
   };
 
   componentDidMount() {
@@ -46,7 +46,7 @@ class AnalyserNode extends Component {
       this.setState({ value: average });
     };
 
-    this.setState({ audioDataNode });
+    this.setState({ analyserNode });
 
     currentNode.connect(analyserNode);
     analyserNode.connect(audioDataNode);
@@ -65,13 +65,13 @@ class AnalyserNode extends Component {
   };
 
   render() {
-    const { audioDataNode, value } = this.state;
+    const { analyserNode, value } = this.state;
     const { children, audioContext, currentNode, ...rest } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         value,
-        currentNode: audioDataNode
+        currentNode: analyserNode
       });
     });
 

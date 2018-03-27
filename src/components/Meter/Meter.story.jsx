@@ -58,13 +58,13 @@ stories
     <AudioContext>
       <AudioSource source={text('Source', 'microphone')}>
         <GainNode>
-          <Destination />
           <Knob
             initialValue={100}
             degreeRange={number('Degree Range #2', 180)}
             degreeOffset={number('Degree Offset #2', 90)}
           />
           <AnalyserNode>
+            <Destination />
             <Meter />
           </AnalyserNode>
         </GainNode>
