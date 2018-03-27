@@ -6,7 +6,7 @@ const Canvas = styled.canvas.attrs({
   width: (props) => props.width,
   height: (props) => props.height
 })`
-  ${(props) => (props.vertical ? 'transform: rotate(90deg)' : '')};
+  ${(props) => (props.vertical ? 'transform: rotate(-90deg)' : '')};
 `;
 
 class Meter extends Component {

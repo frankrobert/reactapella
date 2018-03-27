@@ -47,7 +47,6 @@ class Microphone extends Component {
           }
         },
         (stream) => {
-          console.log('MICROPHONE PROPS: ', this.props);
           const audioSource = audioContext.createMediaStreamSource(stream);
 
           this.setState({ audioSource });

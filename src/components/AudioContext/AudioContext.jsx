@@ -23,8 +23,6 @@ class AudioContext extends Component {
 
     const audioContext = new window.AudioContext();
 
-    console.log('AUDIO CONTEXT: ', audioContext);
-
     this.setState({ audioContext, audioDestination: audioContext.destination });
   };
 
