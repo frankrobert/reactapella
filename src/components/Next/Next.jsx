@@ -12,6 +12,10 @@ export default styled(Button)`
   position: relative;
   transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
+  &:disabled {
+    color: grey;
+  }
+
   &::after {
     content: '→';
     font-size: 24px;
@@ -20,7 +24,6 @@ export default styled(Button)`
     left: 50;
     transform: translate(-50%, -50%);
   }
-
 
   &:hover {
     box-shadow: 0px 0px 20px 0px #63535b;
