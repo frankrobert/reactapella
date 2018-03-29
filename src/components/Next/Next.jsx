@@ -18,7 +18,7 @@ export default styled(Button)`
 
   &::after {
     content: '→';
-    font-size: 24px;
+    font-size: 48px;
     position: absolute;
     top: 50%;
     left: 50;

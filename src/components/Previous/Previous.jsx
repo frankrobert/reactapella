@@ -12,4 +12,12 @@ export default styled(Next)`
   &:disabled {
     color: grey;
   }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active {
+    box-shadow: inset 0px 0px 12px 3px #63535b;
+  }
 `;
