@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Microphone from '../Microphone/Microphone';
+import FileUpload from '../FileUpload/FileUpload';
 
 const AudioSource = ({ children, source, ...rest }) => {
-  if (source === 'microphone') {
-    return <Microphone {...rest}>{children}</Microphone>;
+  switch(source) {
+    case 'microphone':
+      return <Microphone {...rest}>{children}</Microphone>;
+    case 'file':
+      return <FileUpload {...rest}>{children}</FileUpload>;
+    default:
+      return children;
   }
-
-  return children;
 };
 
 AudioSource.propTypes = {

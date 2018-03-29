@@ -54,9 +54,26 @@ stories
   .add('with 50% meter', () => <Meter value={number('Value', 50)} />)
   .add('vertical', () => <Meter vertical={boolean('Vertical', true)} />)
   .add('controlled with knob', () => <MeterWithKnob />)
-  .add('with Audio input', () => (
+  .add('with mic input', () => (
     <AudioContext>
       <AudioSource source={text('Source', 'microphone')}>
+        <GainNode>
+          <Knob
+            initialValue={100}
+            degreeRange={number('Degree Range #2', 180)}
+            degreeOffset={number('Degree Offset #2', 90)}
+          />
+          <AnalyserNode>
+            <Destination />
+            <Meter />
+          </AnalyserNode>
+        </GainNode>
+      </AudioSource>
+    </AudioContext>
+  ))
+  .add('with Audio file input', () => (
+    <AudioContext>
+      <AudioSource source={text('Source', 'file')}>
         <GainNode>
           <Knob
             initialValue={100}
