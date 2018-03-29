@@ -18,6 +18,12 @@ class AudioContext extends Component {
     this.getAudioContext();
   }
 
+  componentWillUnmount() {
+    const { audioContext } = this.state;
+
+    audioContext.close();
+  }
+
   getAudioContext = () => {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 

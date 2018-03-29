@@ -13,7 +13,7 @@ class GainNode extends Component {
   };
 
   state = {
-    value: undefined,
+    value: null,
     gainNode: null
   };
 
@@ -38,7 +38,8 @@ class GainNode extends Component {
   };
 
   getGainNode = () => {
-    const { audioContext, audioDestination, currentNode } = this.props;
+    const { audioContext, audioDestination, children, currentNode } = this.props;
+    const [initialValue] = children.map((child) => child.props.initialValue);
 
     if (!audioContext || !currentNode || !audioDestination) {
       return setTimeout(this.getGainNode, 50);
@@ -47,7 +48,7 @@ class GainNode extends Component {
     const gainNode = audioContext.createGain();
 
     currentNode.connect(gainNode);
-    this.setState({ gainNode });
+    this.setState({ gainNode, value: initialValue });
   };
 
   render() {
