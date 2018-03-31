@@ -6,19 +6,38 @@ class GainNode extends Component {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
-    ]).isRequired,
-    audioContext: PropTypes.object.isRequired,
-    audioDestination: PropTypes.object.isRequired,
-    currentNode: PropTypes.object.isRequired
+    ]),
+    audioContext: PropTypes.object,
+    audioDestination: PropTypes.object,
+    currentNode: PropTypes.object,
+    id: PropTypes.string,
+    destination: PropTypes.bool
   };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.audioContext && nextProps.currentNode && !prevState.gainNode) {
+      const gainNode = nextProps.audioContext.createGain();
+      const value = nextProps.initialValue || 0;
+
+      gainNode.gain.setValueAtTime(value / 100, 0);
+      
+      return { gainNode, value };
+    }
+
+    return null;
+  }
 
   state = {
     value: null,
     gainNode: null
   };
 
-  componentDidMount() {
-    this.getGainNode();
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.gainNode && this.state.gainNode) {
+      this.props.currentNode.connect(this.state.gainNode);
+
+      if (prevProps.destination) this.state.gainNode.connect(prevProps.audioDestination);
+    }
   }
 
   onChange = (value) => {
@@ -35,20 +54,6 @@ class GainNode extends Component {
       newValue,
       audioContext.currentTime
     );
-  };
-
-  getGainNode = () => {
-    const { audioContext, audioDestination, children, currentNode } = this.props;
-    const [initialValue] = children.map((child) => child.props.initialValue);
-
-    if (!audioContext || !currentNode || !audioDestination) {
-      return setTimeout(this.getGainNode, 50);
-    }
-
-    const gainNode = audioContext.createGain();
-
-    currentNode.connect(gainNode);
-    this.setState({ gainNode, value: initialValue });
   };
 
   render() {

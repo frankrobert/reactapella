@@ -6,9 +6,9 @@ class FileUpload extends Component {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
-    ]).isRequired,
-    audioContext: PropTypes.object.isRequired,
-    audioDestination: PropTypes.object.isRequired
+    ]),
+    audioContext: PropTypes.object,
+    audioDestination: PropTypes.object
   };
 
   state = {
