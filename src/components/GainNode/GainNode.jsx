@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class GainNode extends Component {
+class Gain extends Component {
   static propTypes = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
     ]),
     audioContext: PropTypes.object,
-    audioDestination: PropTypes.object,
     currentNode: PropTypes.object,
     id: PropTypes.string,
-    destination: PropTypes.bool
+    destination: PropTypes.bool,
+    onSetNodeById: PropTypes.func,
+    onGetNodeById: PropTypes.func,
+    connections: PropTypes.array
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -36,7 +38,20 @@ class GainNode extends Component {
     if (!prevState.gainNode && this.state.gainNode) {
       this.props.currentNode.connect(this.state.gainNode);
 
-      if (prevProps.destination) this.state.gainNode.connect(prevProps.audioDestination);
+      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.gainNode);
+      if (prevProps.destination) this.state.gainNode.connect(prevProps.audioContext.destination);
+      if (prevProps.connections && prevProps.connections.length) {
+        prevProps.connections.forEach((connection) => {
+          const { params = [], id } = connection;
+          const node = prevProps.onGetNodeById(id);
+
+          if (params && params.length) {
+            params.forEach((param) => node.connect(this.state.gainNode[param]));
+          } else {
+            node.connect(this.state.gainNode);
+          }
+        });
+      }
     }
   }
 
@@ -68,8 +83,10 @@ class GainNode extends Component {
       });
     });
 
+    if (!newElements) return null;
+
     return newElements;
   }
 }
 
-export default GainNode;
+export default Gain;

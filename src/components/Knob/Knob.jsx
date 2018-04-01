@@ -3,16 +3,50 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
+// TODO FIX DIAL ANIMATION
 const KnobWrapper = styled.div`
   max-height: ${({ size }) => size || 200}px;
   height: 200px;
   width: 200px;
   border-radius: 50%;
   border: 2px solid #222;
-  background-color: #b8bc9e;
   position: relative;
   box-shadow: 0px 0px 20px 0px #63535b;
-  transform: rotate(
+  background-color:#39B4CC;
+  background-image:
+    ${(props) => {
+      const degree = props.degreeOffset
+        + (props.divisions > 1 ? props.getClosest(props.value) : props.value)
+        * (props.degreeRange / 100 || 3.6)
+        + 180 || -180;
+
+      if (degree <= 360) {
+        return `
+        linear-gradient(${90 + degree}deg, transparent 50%, #A2ECFB 50%),
+        linear-gradient(${props.degreeOffset - 90}deg, #A2ECFB 50%, transparent 50%);
+        `
+      }
+
+      return `
+        linear-gradient(${-90 - props.degreeOffset}deg, transparent 50%, #39B4CC 50%),
+        linear-gradient(${-90 + degree}deg, #A2ECFB 50%, transparent 50%);
+        `
+    }}
+
+    ${(props) => {
+    return !props.isDragging && !props.isScrolling && props.valueSnapping
+      ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);'
+      : 'transition: null;';
+  }}
+`;
+
+const InnerDial = styled.div`
+  height: 180px;
+  width: 180px;
+  border-radius: 50%;
+  border: 2px solid #222;
+  background-color: #193856;
+  transform: translate(-50%, -50%) rotate(
     ${(props) => {
       return (
         props.degreeOffset +
@@ -24,18 +58,9 @@ const KnobWrapper = styled.div`
   );
   ${(props) => {
     return !props.isDragging && !props.isScrolling && props.valueSnapping
-      ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55)'
-      : 'transition: null';
-  }};
-`;
-
-const InnerDial = styled.div`
-  height: 180px;
-  width: 180px;
-  border-radius: 50%;
-  border: 2px solid #222;
-  background-color: #629b89;
-  transform: translate(-50%, -50%);
+      ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);'
+      : 'transition: null;';
+  }}
   position: absolute;
   left: 50%;
   top: 50%;
@@ -61,7 +86,6 @@ const Range = styled.input.attrs({ type: 'range' })`
   visibility: hidden;
 `;
 
-// TODO: Fix the initialValue states
 class KnobInput extends Component {
   constructor(props) {
     super(props);
@@ -190,19 +214,28 @@ class KnobInput extends Component {
 
     return (
       <KnobWrapper
-        degreeOffset={degreeOffset}
-        degreeRange={degreeRange}
-        value={value}
-        divisions={divisions}
-        onWheel={this.updateOnScroll}
         isDragging={isDragging}
         isScrolling={isScrolling}
+        degreeOffset={degreeOffset}
+        degreeRange={degreeRange}
+        divisions={divisions}
+        value={value}
+        valueSnapping={valueSnapping}
+        getClosest={this.getClosest}
+        onWheel={this.updateOnScroll}
         innerRef={(e) => (this.dial = e)}
         onMouseDown={this.onMouseDown}
-        getClosest={this.getClosest}
-        valueSnapping={valueSnapping}
       >
-        <InnerDial>
+        <InnerDial
+          isDragging={isDragging}
+          isScrolling={isScrolling}
+          degreeOffset={degreeOffset}
+          degreeRange={degreeRange}
+          divisions={divisions}
+          value={value}
+          valueSnapping={valueSnapping}
+          getClosest={this.getClosest}
+        >
           <Dot />
         </InnerDial>
         <Range
