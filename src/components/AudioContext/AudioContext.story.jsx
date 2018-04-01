@@ -5,6 +5,7 @@ import { withKnobs, number, text } from '@storybook/addon-knobs/react';
 import AudioContext from './AudioContext';
 import AudioSource from '../AudioSource/AudioSource';
 import AnalyserNode from '../AnalyserNode/AnalyserNode';
+import StereoPanner from '../StereoPanner/StereoPanner';
 import GainNode from '../GainNode/GainNode';
 import Meter from '../Meter/Meter';
 import Knob from '../Knob/Knob';
@@ -60,6 +61,20 @@ stories
               <Meter />
             </AnalyserNode>
           </GainNode>
+        </GainNode>
+      </AudioSource>
+    </AudioContext>
+  ))
+  .add('with StereoPanner', () => (
+    <AudioContext>
+      <AudioSource source={text('Source', 'file')}>
+        <GainNode initialValue={number('InitialValue', 100)}>
+          <StereoPanner destination>
+            <Knob
+              degreeRange={number('Degree Range #2', 180)}
+              degreeOffset={number('Degree Offset #2', 90)}
+            />
+          </StereoPanner>
         </GainNode>
       </AudioSource>
     </AudioContext>
