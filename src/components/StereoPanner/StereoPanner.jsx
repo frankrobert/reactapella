@@ -15,7 +15,12 @@ class StereoPanner extends Component {
     onGetNodeById: PropTypes.func,
     connections: PropTypes.array,
     options: PropTypes.object,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    passThrough: PropTypes.bool,
+    params: PropTypes.oneOfType([
+      PropTypes.array,
+      PropTypes.string
+    ])
   };
 
   static defaultProps = {
@@ -46,6 +51,17 @@ class StereoPanner extends Component {
 
       if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.stereoPannerNode);
       if (prevProps.destination) this.state.stereoPannerNode.connect(prevProps.audioContext.destination);
+
+      if (prevProps.params && prevProps.params.length) {
+        if (Array.isArray(prevProps.params)) {
+          prevProps.params.forEach((param) => {
+            prevProps.currentNode.connect(this.state.stereoPannerNode[param]);
+          });
+        } else {
+          prevProps.currentNode.connect(this.state.stereoPannerNode[prevProps.params]);
+        }
+      }
+
       if (prevProps.connections && prevProps.connections.length) {
         prevProps.connections.forEach((connection) => {
           const { params = [], id } = connection;
@@ -62,13 +78,13 @@ class StereoPanner extends Component {
   }
 
   onChange = (value) => {
-    const { onChange } = this.props;
+    const { onChange, passThrough } = this.props;
     const { stereoPannerNode } = this.state;
 
     this.setState({ value });
 
     stereoPannerNode.pan.value = (value / 100) * 2 - 1;
-    onChange(value);
+    if (passThrough) onChange(value);
   };
 
   render() {

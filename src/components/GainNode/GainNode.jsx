@@ -13,12 +13,17 @@ class Gain extends Component {
     destination: PropTypes.bool,
     onSetNodeById: PropTypes.func,
     onGetNodeById: PropTypes.func,
-    connections: PropTypes.array
+    connections: PropTypes.array,
+    options: PropTypes.object
   };
+
+  static defaultProps = {
+    options: {}
+  }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.audioContext && nextProps.currentNode && !prevState.gainNode) {
-      const gainNode = nextProps.audioContext.createGain();
+      const gainNode = new GainNode(nextProps.audioContext, ...nextProps.options);
       const value = nextProps.initialValue || 0;
 
       gainNode.gain.setValueAtTime(value / 100, 0);

@@ -69,7 +69,22 @@ stories
     <AudioContext>
       <AudioSource source={text('Source', 'file')}>
         <GainNode initialValue={number('InitialValue', 100)}>
-          <StereoPanner destination>
+          <StereoPanner passThrough destination>
+            <Knob
+              degreeRange={number('Degree Range #2', 180)}
+              degreeOffset={number('Degree Offset #2', 90)}
+            />
+          </StereoPanner>
+        </GainNode>
+      </AudioSource>
+    </AudioContext>
+  ))
+  .add('with Wet/Dry', () => (
+    <AudioContext>
+      <AudioSource source={text('Source', 'file')}>
+        <GainNode initialValue={number('InitialValue', 100)}>
+          <StereoPanner passThrough destination>
+            <GainNode />
             <Knob
               degreeRange={number('Degree Range #2', 180)}
               degreeOffset={number('Degree Offset #2', 90)}
