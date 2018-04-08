@@ -77,7 +77,7 @@ class FileUpload extends Component {
         id="input"
         onChange={this.onChange}
       />
-    ); // eslint-disable-line
+    );
   }
 }
 
