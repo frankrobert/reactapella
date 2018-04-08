@@ -18,17 +18,14 @@ class Analyser extends Component {
   };
 
   static defaultProps = {
-    options: {
-      smoothingTimeConstant: 0.3,
-      fftSize: 256
-    }
+    options: {}
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.audioContext && nextProps.currentNode && !prevState.analyserNode) {
-      const analyserNode = new AnalyserNode(nextProps.audioContext, ...nextProps.options);
+    if (nextProps.audioContext && nextProps.currentNode && !prevState.audioNode) {
+      const audioNode = new AnalyserNode(nextProps.audioContext, nextProps.options);
 
-      return { analyserNode };
+      return { audioNode };
     }
 
     return null;
@@ -36,35 +33,45 @@ class Analyser extends Component {
 
   state = {
     value: 0,
-    analyserNode: null,
+    audioNode: null,
     audioDataNode: null
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.analyserNode && this.state.analyserNode) {
+    if (!prevState.audioNode && this.state.audioNode) {
       this.createAnalyser();
     }
 
     if (!prevState.audioDataNode && this.state.audioDataNode) {
-      this.props.currentNode.connect(this.state.analyserNode);
-      this.state.analyserNode.connect(this.state.audioDataNode);
+      this.props.currentNode.connect(this.state.audioNode);
+      this.state.audioNode.connect(this.state.audioDataNode);
       this.state.audioDataNode.connect(this.props.audioContext.destination);
       
       if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.gainNode);
-      if (this.props.destination) this.state.analyserNode.connect(this.props.audioContext.destination);
+      if (this.props.destination) this.state.audioNode.connect(this.props.audioContext.destination);
       if (prevProps.connections && prevProps.connections.length) {
-        prevProps.connections.forEach((connection) => {
-          const { params = [], id } = connection;
-          const node = prevProps.onGetNodeById(id);
-
-          if (params && params.length) {
-            params.forEach((param) => node.connect(this.state.analyserNode[param]));
-          } else {
-            node.connect(this.state.analyserNode);
-          }
-        });
+        this.setupConnections(prevProps.connections);
       }
     }
+  }
+
+  setupConnections = (connections) => {
+    const { onGetNodeById } = this.props;
+    const nodes = connections
+      .map((connection) => onGetNodeById(connection.id))
+      .filter(Boolean);
+
+    if (!nodes.length || nodes.length !== connections.length) {
+      return setTimeout(() => this.setupConnections(connections), 300);
+    }
+
+    nodes.forEach((node, i) => {
+      if (connections[i].params && connections[i].params.length) {
+        connections[i].params.forEach((param) => this.state.audioNode.connect(node[param]));
+      } else {
+        this.state.audioNode.connect(node);
+      }
+    });
   }
 
   getAverageVolume = (analyserFreqArray) => {
@@ -75,16 +82,36 @@ class Analyser extends Component {
     return average;
   };
 
+  // checkClipping = (analyserFreqArray) => {
+  //   // Iterate through buffer to check if any of the |values| exceeds 1
+  //   // const isClipping = analyserFreqArray
+  //   //   .map((buffer) => Math.abs(buffer) >= 1.0)
+  //   //   .filter(Boolean);
+
+  //   // console.log(isClipping.length);
+  //   let isClipping = false;
+
+  //   for (let i = 0; i < analyserFreqArray.length; i++) { // eslint-disable-line
+  //     const val = analyserFreqArray[i];
+
+  //   	if (Math.abs(val) >= 1.0) {
+  //   		isClipping = true;
+  //   	}
+  //   }
+
+  //   return isClipping;
+  // };
+
   createAnalyser = () => {
-    const { analyserNode } = this.state;
+    const { audioNode } = this.state;
     const { audioContext } = this.props;
     const audioDataNode = audioContext.createScriptProcessor(2048, 1, 1);
     
     audioDataNode.onaudioprocess = () => {
       // get the average, bincount is fftsize / 2
-      const analyserFreqArray = new Uint8Array(analyserNode.frequencyBinCount);
+      const analyserFreqArray = new Uint8Array(audioNode.frequencyBinCount);
 
-      analyserNode.getByteFrequencyData(analyserFreqArray);
+      audioNode.getByteFrequencyData(analyserFreqArray);
 
       const average = this.getAverageVolume(analyserFreqArray);
 
@@ -95,13 +122,13 @@ class Analyser extends Component {
   };
 
   render() {
-    const { analyserNode, value } = this.state;
+    const { audioNode, value } = this.state;
     const { children, audioContext, currentNode, ...rest } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         value,
-        currentNode: analyserNode
+        currentNode: audioNode
       });
     });
 

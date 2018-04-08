@@ -84,7 +84,7 @@ stories
   .add('with Wet/Dry', () => {
     return (
       <AudioContext>
-        <AudioSource source={text('Source', 'microphone')}>
+        <AudioSource source={text('Source', 'file')}>
           <GainNode>
             <StereoPanner id="panner">
               <GainNode id="wetMix" initialValue={50} destination>
@@ -93,11 +93,11 @@ stories
                 </RemoteControl>
               </GainNode>
             </StereoPanner>
-            <GainNode
-              id="dryMix"
-              initialValue={50}
-            >
-              <AnalyserNode destination>
+            <GainNode id="dryMix" initialValue={50}>
+              <AnalyserNode
+                options={{ smoothingTimeConstant: 0.3, maxDecibels: -10, fftSize: 256 }}
+                destination
+              >
                 <Meter />
               </AnalyserNode>
             </GainNode>
