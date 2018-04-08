@@ -40,7 +40,7 @@ class AudioContext extends Component {
     const ids = this.nodeList.map((ref) => ref.id);
 
     if (!ids.includes(id)) this.nodeList.push({ id, node, component });
-  }
+  };
 
   getNodeById = (id) => {
     const { node } = this.nodeList.find((ref) => ref.id === id) || {};
@@ -52,7 +52,7 @@ class AudioContext extends Component {
     const { component } = this.nodeList.find((ref) => ref.id === id) || {};
 
     return component;
-  }
+  };
 
   render() {
     const children = React.Children.map(this.props.children, (child) => {

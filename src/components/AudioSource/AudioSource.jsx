@@ -5,7 +5,7 @@ import FileUpload from '../FileUpload/FileUpload';
 import OscillatorNode from '../OscillatorNode/OscillatorNode';
 
 const AudioSource = ({ children, source, ...rest }) => {
-  switch(source) {
+  switch (source) {
     case 'microphone': {
       return <Microphone {...rest}>{children}</Microphone>;
     }
@@ -13,7 +13,7 @@ const AudioSource = ({ children, source, ...rest }) => {
       return <FileUpload {...rest}>{children}</FileUpload>;
     }
     case 'oscillator': {
-      return <OscillatorNode {...rest}>{children}</OscillatorNode>
+      return <OscillatorNode {...rest}>{children}</OscillatorNode>;
     }
     default: {
       return children;

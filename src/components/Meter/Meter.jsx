@@ -35,7 +35,10 @@ class Meter extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.isClipping !== this.props.isClipping || nextProps.value !== this.props.value) {
+    if (
+      nextProps.isClipping !== this.props.isClipping ||
+      nextProps.value !== this.props.value
+    ) {
       window.requestAnimationFrame(this.updateMeter);
     }
   }

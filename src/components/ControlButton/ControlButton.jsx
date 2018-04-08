@@ -17,7 +17,8 @@ const ActiveText = styled.p`
 const ActiveState = styled.div`
   height: 30px;
   width: 30px;
-  background-color: ${(props) => (props.isActive ? COLORS.GREEN : COLORS.YELLOW)};
+  background-color: ${(props) =>
+    props.isActive ? COLORS.GREEN : COLORS.YELLOW};
   border-radius: 50%;
   border: 2px solid #222;
   position: absolute;

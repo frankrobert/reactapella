@@ -13,9 +13,11 @@ The signal comes in at microphone level (a few millivolts), gain is applied, and
 The gain (a.k.a. trim) control allows the FOH tech to allow for more or less of the signal to come into the console.  For example, a hot signal from an instrument would need less of that signal to come into the console.  It would be like turning a faucet valve so less water comes out although the water pressure behind the valve stays the same.
 Some signals come into the console so strong they can still be heard with the gain at zero.  When this is the case, the Pad option should be used.  It cuts 20 dB from the signal and places it into a manageable range.`;
 
-const title = 'Follow the signal'
+const title = 'Follow the signal';
 const stories = storiesOf('LessonSpace', module);
 
 stories.addDecorator(withKnobs).addDecorator(centered);
 
-stories.add('with default values', () => <LessonSpace title={title} lessonText={text} />)
+stories.add('with default values', () => (
+  <LessonSpace title={title} lessonText={text} />
+));

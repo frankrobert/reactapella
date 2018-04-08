@@ -14,34 +14,41 @@ const KnobWrapper = styled.div`
   position: relative;
   box-shadow: 0px 0px 20px 0px #63535b;
   background-color: ${COLORS.LIGHT_GREEN};
-  background-image:
-    ${(props) => {
-      const value = props.divisions > 1 ? props.getClosest(props.value) : props.value;
+  background-image: ${(props) => {
+      const value =
+        props.divisions > 1 ? props.getClosest(props.value) : props.value;
       let degreeRange = props.degreeRange;
 
       if (degreeRange > 360) degreeRange -= 360;
       else if (degreeRange < 0) degreeRange += 360;
 
-      const degree = value / 100 * (degreeRange) + props.degreeOffset;
+      const degree = value / 100 * degreeRange + props.degreeOffset;
 
       if (degree <= 180) {
         return `
-        linear-gradient(${-90 + degree}deg, transparent 50%, ${COLORS.YELLOW} 50%),
-        linear-gradient(${props.degreeOffset - 90}deg, ${COLORS.YELLOW} 50%, transparent 50%);
-        `
+        linear-gradient(${-90 + degree}deg, transparent 50%, ${
+          COLORS.YELLOW
+        } 50%),
+        linear-gradient(${props.degreeOffset - 90}deg, ${
+          COLORS.YELLOW
+        } 50%, transparent 50%);
+        `;
       }
 
       return `
-        linear-gradient(${degree + 90}deg, transparent 50%, ${COLORS.LIGHT_GREEN} 50%),
-        linear-gradient(${props.degreeOffset + 270}deg, ${COLORS.YELLOW} 50%, transparent 50%);
-        `
+        linear-gradient(${degree + 90}deg, transparent 50%, ${
+        COLORS.LIGHT_GREEN
+      } 50%),
+        linear-gradient(${props.degreeOffset + 270}deg, ${
+        COLORS.YELLOW
+      } 50%, transparent 50%);
+        `;
     }}
-
     ${(props) => {
-    return !props.isDragging && !props.isScrolling && props.valueSnapping
-      ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);'
-      : 'transition: null;';
-  }}
+      return !props.isDragging && !props.isScrolling && props.valueSnapping
+        ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);'
+        : 'transition: null;';
+    }};
 `;
 
 const InnerDial = styled.div`
@@ -50,23 +57,24 @@ const InnerDial = styled.div`
   border-radius: 50%;
   border: 2px solid #222;
   background-color: ${COLORS.GREEN};
-  transform: translate(-50%, -50%) scale(-1) rotate(
-    ${(props) => {
-      const value = props.divisions > 1 ? props.getClosest(props.value) : props.value;
-      let degreeRange = props.degreeRange;
+  transform: translate(-50%, -50%) scale(-1)
+    rotate(
+      ${(props) => {
+        const value =
+          props.divisions > 1 ? props.getClosest(props.value) : props.value;
+        let degreeRange = props.degreeRange;
 
-      if (degreeRange > 360) degreeRange -= 360;
-      else if (degreeRange < 0) degreeRange += 360;
+        if (degreeRange > 360) degreeRange -= 360;
+        else if (degreeRange < 0) degreeRange += 360;
 
-      return value / 100 * (degreeRange) + props.degreeOffset;
-    }}deg
-  );
+        return value / 100 * degreeRange + props.degreeOffset;
+      }}deg
+    );
   ${(props) => {
     return !props.isDragging && !props.isScrolling && props.valueSnapping
       ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);'
       : 'transition: null;';
-  }}
-  position: absolute;
+  }} position: absolute;
   left: 50%;
   top: 50%;
 `;

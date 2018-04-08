@@ -35,7 +35,7 @@ stories
   .add('with file input', () => (
     <AudioContext>
       <AudioSource source={text('Source', 'file')}>
-        <GainNode  initialValue={number('InitialValue', 100)}>
+        <GainNode initialValue={number('InitialValue', 100)}>
           <Knob
             degreeRange={number('Degree Range #2', 180)}
             degreeOffset={number('Degree Offset #2', 90)}
@@ -50,15 +50,15 @@ stories
   .add('with a distant connection', () => (
     <AudioContext>
       <AudioSource source={text('Source', 'file')}>
-        <GainNode  initialValue={number('InitialValue', 100)}>
+        <GainNode initialValue={number('InitialValue', 100)}>
           <GainNode>
-            <GainNode id="1"/>
+            <GainNode id="1" />
           </GainNode>
           <Knob
             degreeRange={number('Degree Range #2', 180)}
             degreeOffset={number('Degree Offset #2', 90)}
           />
-          <GainNode connections={[{id: '1'}]}>
+          <GainNode connections={[{ id: '1' }]}>
             <AnalyserNode destination>
               <Meter />
             </AnalyserNode>
@@ -88,14 +88,20 @@ stories
           <GainNode>
             <StereoPanner id="panner">
               <GainNode id="wetMix" initialValue={50} destination>
-                <RemoteControl links={[{ id: 'dryMix', rateOfChange: 'inverted' }]}>
+                <RemoteControl
+                  links={[{ id: 'dryMix', rateOfChange: 'inverted' }]}
+                >
                   <Knob />
                 </RemoteControl>
               </GainNode>
             </StereoPanner>
             <GainNode id="dryMix" initialValue={50}>
               <AnalyserNode
-                options={{ smoothingTimeConstant: 0.3, maxDecibels: -10, fftSize: 256 }}
+                options={{
+                  smoothingTimeConstant: 0.3,
+                  maxDecibels: -10,
+                  fftSize: 256
+                }}
                 destination
               >
                 <Meter />

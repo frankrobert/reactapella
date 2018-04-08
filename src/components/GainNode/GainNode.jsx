@@ -19,15 +19,19 @@ class Gain extends Component {
 
   static defaultProps = {
     options: {}
-  }
+  };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.audioContext && nextProps.currentNode && !prevState.audioNode) {
+    if (
+      nextProps.audioContext &&
+      nextProps.currentNode &&
+      !prevState.audioNode
+    ) {
       const audioNode = new GainNode(nextProps.audioContext, nextProps.options);
       const value = nextProps.initialValue || 100;
 
       audioNode.gain.setValueAtTime(value / 100, 0);
-      
+
       return { audioNode, value };
     }
 
@@ -43,8 +47,10 @@ class Gain extends Component {
     if (!prevState.audioNode && this.state.audioNode) {
       this.props.currentNode.connect(this.state.audioNode);
 
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
-      if (prevProps.destination) this.state.audioNode.connect(prevProps.audioContext.destination);
+      if (prevProps.id)
+        this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
+      if (prevProps.destination)
+        this.state.audioNode.connect(prevProps.audioContext.destination);
       if (prevProps.connections && prevProps.connections.length) {
         this.setupConnections(prevProps.connections);
       }
@@ -69,7 +75,9 @@ class Gain extends Component {
 
   setupConnections = (connections) => {
     const { onGetNodeById } = this.props;
-    const nodes = connections.filter((connection) => onGetNodeById(connection.id))
+    const nodes = connections.filter((connection) =>
+      onGetNodeById(connection.id)
+    );
 
     if (!nodes.length || nodes.length !== connections.length) {
       return setTimeout(() => this.setupConnections(connections), 300);
@@ -77,16 +85,25 @@ class Gain extends Component {
 
     nodes.forEach((node, i) => {
       if (connections[i].params && connections[i].params.length) {
-        connections[i].params.forEach((param) => this.state.audioNode.connect(node[param]));
+        connections[i].params.forEach((param) =>
+          this.state.audioNode.connect(node[param])
+        );
       } else {
         this.state.audioNode.connect(node);
       }
     });
-  }
+  };
 
   render() {
     const { audioNode } = this.state;
-    const { children, currentNode, id, connections, options, ...rest } = this.props;
+    const {
+      children,
+      currentNode,
+      id,
+      connections,
+      options,
+      ...rest
+    } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,

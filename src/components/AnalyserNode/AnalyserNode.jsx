@@ -22,8 +22,15 @@ class Analyser extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.audioContext && nextProps.currentNode && !prevState.audioNode) {
-      const audioNode = new AnalyserNode(nextProps.audioContext, nextProps.options);
+    if (
+      nextProps.audioContext &&
+      nextProps.currentNode &&
+      !prevState.audioNode
+    ) {
+      const audioNode = new AnalyserNode(
+        nextProps.audioContext,
+        nextProps.options
+      );
 
       return { audioNode };
     }
@@ -46,9 +53,11 @@ class Analyser extends Component {
       this.props.currentNode.connect(this.state.audioNode);
       this.state.audioNode.connect(this.state.audioDataNode);
       this.state.audioDataNode.connect(this.props.audioContext.destination);
-      
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.gainNode);
-      if (this.props.destination) this.state.audioNode.connect(this.props.audioContext.destination);
+
+      if (prevProps.id)
+        this.props.onSetNodeById(prevProps.id, this.state.gainNode);
+      if (this.props.destination)
+        this.state.audioNode.connect(this.props.audioContext.destination);
       if (prevProps.connections && prevProps.connections.length) {
         this.setupConnections(prevProps.connections);
       }
@@ -57,7 +66,9 @@ class Analyser extends Component {
 
   setupConnections = (connections) => {
     const { onGetNodeById } = this.props;
-    const nodes = connections.filter((connection) => onGetNodeById(connection.id))
+    const nodes = connections.filter((connection) =>
+      onGetNodeById(connection.id)
+    );
 
     if (!nodes.length || nodes.length !== connections.length) {
       return setTimeout(() => this.setupConnections(connections), 300);
@@ -65,12 +76,14 @@ class Analyser extends Component {
 
     nodes.forEach((node, i) => {
       if (connections[i].params && connections[i].params.length) {
-        connections[i].params.forEach((param) => this.state.audioNode.connect(node[param]));
+        connections[i].params.forEach((param) =>
+          this.state.audioNode.connect(node[param])
+        );
       } else {
         this.state.audioNode.connect(node);
       }
     });
-  }
+  };
 
   getAverageVolume = (analyserFreqArray) => {
     // get all the frequency amplitudes
@@ -104,7 +117,7 @@ class Analyser extends Component {
     const { audioNode } = this.state;
     const { audioContext } = this.props;
     const audioDataNode = audioContext.createScriptProcessor(2048, 1, 1);
-    
+
     audioDataNode.onaudioprocess = () => {
       // get the average, bincount is fftsize / 2
       const analyserFreqArray = new Uint8Array(audioNode.frequencyBinCount);

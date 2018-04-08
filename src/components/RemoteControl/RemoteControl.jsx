@@ -17,7 +17,10 @@ class RemoteControl extends Component {
 
     links.forEach((link) => {
       const component = onGetComponentById(link.id);
-      const computedValue = this.calculateComputedValue(value, link.rateOfChange);
+      const computedValue = this.calculateComputedValue(
+        value,
+        link.rateOfChange
+      );
 
       component.onChange(computedValue);
     });
@@ -29,10 +32,10 @@ class RemoteControl extends Component {
     if (value === 50) return value;
 
     return 100 - value;
-  }
+  };
 
   calculateComputedValue = (value, rateOfChange) => {
-    switch(rateOfChange) {
+    switch (rateOfChange) {
       case 'inverted': {
         return this.invertedValue(value);
       }
@@ -40,7 +43,7 @@ class RemoteControl extends Component {
         return value;
       }
     }
-  }
+  };
 
   render() {
     const { children, ...rest } = this.props;

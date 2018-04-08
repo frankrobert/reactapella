@@ -7,8 +7,7 @@ const Slider = styled.div`
   ${(props) =>
     props.toggled
       ? `background: ${COLORS.GREEN};`
-      : `background: ${COLORS.RED};`}
-  border: 2px solid #222;
+      : `background: ${COLORS.RED};`} border: 2px solid #222;
   height: 40px;
   width: 130px;
   border-radius: 20px;
@@ -21,7 +20,7 @@ const Slider = styled.div`
       ${(props) =>
         props.toggled
           ? 'transform: translate(200%, -50%) scale(1.05, 1.05);'
-          : 'transform: translate(0, -50%) scale(1.05, 1.05);'}
+          : 'transform: translate(0, -50%) scale(1.05, 1.05);'};
     }
   }
 `;

@@ -6,10 +6,10 @@ const RED = 'rgba(255, 22, 84, 1)';
 const WHITE = '#fff';
 
 export default {
-    BLUE,
-    GREEN,
-    LIGHT_GREEN,
-    YELLOW,
-    RED,
-    WHITE
-}
+  BLUE,
+  GREEN,
+  LIGHT_GREEN,
+  YELLOW,
+  RED,
+  WHITE
+};

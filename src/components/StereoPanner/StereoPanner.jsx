@@ -17,23 +17,27 @@ class StereoPanner extends Component {
     options: PropTypes.object,
     onChange: PropTypes.func,
     passThrough: PropTypes.bool,
-    params: PropTypes.oneOfType([
-      PropTypes.array,
-      PropTypes.string
-    ])
+    params: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
   };
 
   static defaultProps = {
     options: {}
-  }
+  };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.audioContext && nextProps.currentNode && !prevState.audioNode) {
-      const audioNode = new StereoPannerNode(nextProps.audioContext, nextProps.options);
+    if (
+      nextProps.audioContext &&
+      nextProps.currentNode &&
+      !prevState.audioNode
+    ) {
+      const audioNode = new StereoPannerNode(
+        nextProps.audioContext,
+        nextProps.options
+      );
       const value = nextProps.initialValue || 0;
 
       audioNode.pan.setValueAtTime(value / 100, 0);
-      
+
       return { audioNode, value };
     }
 
@@ -49,8 +53,10 @@ class StereoPanner extends Component {
     if (!prevState.audioNode && this.state.audioNode) {
       this.props.currentNode.connect(this.state.audioNode);
 
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
-      if (prevProps.destination) this.state.audioNode.connect(prevProps.audioContext.destination);
+      if (prevProps.id)
+        this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
+      if (prevProps.destination)
+        this.state.audioNode.connect(prevProps.audioContext.destination);
 
       if (prevProps.params && prevProps.params.length) {
         this.setupParams(prevProps.params);
@@ -68,7 +74,7 @@ class StereoPanner extends Component {
 
     this.setState({ value });
 
-    audioNode.pan.setValueAtTime((value / 100) * 2 - 1, 0);
+    audioNode.pan.setValueAtTime(value / 100 * 2 - 1, 0);
     if (passThrough) onChange(value);
   };
 
@@ -76,15 +82,19 @@ class StereoPanner extends Component {
     const { currentNode } = this.props;
 
     if (Array.isArray(params)) {
-      params.forEach((param) => currentNode.connect(this.state.audioNode[param]));
+      params.forEach((param) =>
+        currentNode.connect(this.state.audioNode[param])
+      );
     } else {
       currentNode.connect(this.state.audioNode[params]);
     }
-  }
+  };
 
   setupConnections = (connections) => {
     const { onGetNodeById } = this.props;
-    const nodes = connections.filter((connection) => onGetNodeById(connection.id))
+    const nodes = connections.filter((connection) =>
+      onGetNodeById(connection.id)
+    );
 
     if (!nodes.length || nodes.length !== connections.length) {
       return setTimeout(() => this.setupConnections(connections), 300);
@@ -92,16 +102,28 @@ class StereoPanner extends Component {
 
     nodes.forEach((node, i) => {
       if (connections[i].params && connections[i].params.length) {
-        connections[i].params.forEach((param) => this.state.audioNode.connect(node[param]));
+        connections[i].params.forEach((param) =>
+          this.state.audioNode.connect(node[param])
+        );
       } else {
         this.state.audioNode.connect(node);
       }
     });
-  }
+  };
 
   render() {
     const { audioNode } = this.state;
-    const { children, currentNode, options, id, connections, params, destination, passThrough, ...rest } = this.props;
+    const {
+      children,
+      currentNode,
+      options,
+      id,
+      connections,
+      params,
+      destination,
+      passThrough,
+      ...rest
+    } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
