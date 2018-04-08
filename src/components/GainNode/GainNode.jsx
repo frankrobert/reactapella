@@ -22,13 +22,13 @@ class Gain extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.audioContext && nextProps.currentNode && !prevState.gainNode) {
-      const gainNode = new GainNode(nextProps.audioContext, nextProps.options);
+    if (nextProps.audioContext && nextProps.currentNode && !prevState.audioNode) {
+      const audioNode = new GainNode(nextProps.audioContext, nextProps.options);
       const value = nextProps.initialValue || 100;
 
-      gainNode.gain.setValueAtTime(value / 100, 0);
+      audioNode.gain.setValueAtTime(value / 100, 0);
       
-      return { gainNode, value };
+      return { audioNode, value };
     }
 
     return null;
@@ -36,33 +36,24 @@ class Gain extends Component {
 
   state = {
     value: null,
-    gainNode: null
+    audioNode: null
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.gainNode && this.state.gainNode) {
-      this.props.currentNode.connect(this.state.gainNode);
+    if (!prevState.audioNode && this.state.audioNode) {
+      this.props.currentNode.connect(this.state.audioNode);
 
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.gainNode, this);
-      if (prevProps.destination) this.state.gainNode.connect(prevProps.audioContext.destination);
+      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
+      if (prevProps.destination) this.state.audioNode.connect(prevProps.audioContext.destination);
       if (prevProps.connections && prevProps.connections.length) {
-        prevProps.connections.forEach((connection) => {
-          const { params = [], id } = connection;
-          const node = prevProps.onGetNodeById(id);
-
-          if (params && params.length) {
-            params.forEach((param) => node.connect(this.state.gainNode[param]));
-          } else {
-            node.connect(this.state.gainNode);
-          }
-        });
+        this.setupConnections(prevProps.connections);
       }
     }
   }
 
   onChange = (value) => {
     const { audioContext } = this.props;
-    const { gainNode } = this.state;
+    const { audioNode } = this.state;
 
     this.setState({ value });
 
@@ -70,20 +61,39 @@ class Gain extends Component {
 
     if (newValue === 0) newValue = 0.01;
 
-    gainNode.gain.exponentialRampToValueAtTime(
+    audioNode.gain.exponentialRampToValueAtTime(
       newValue,
       audioContext.currentTime
     );
   };
 
+  setupConnections = (connections) => {
+    const { onGetNodeById } = this.props;
+    const nodes = connections
+      .map((connection) => onGetNodeById(connection.id))
+      .filter(Boolean);
+
+    if (!nodes.length || nodes.length !== connections.length) {
+      return setTimeout(() => this.setupConnections(connections), 300);
+    }
+
+    nodes.forEach((node, i) => {
+      if (connections[i].params && connections[i].params.length) {
+        connections[i].params.forEach((param) => this.state.audioNode.connect(node[param]));
+      } else {
+        this.state.audioNode.connect(node);
+      }
+    });
+  }
+
   render() {
-    const { gainNode } = this.state;
+    const { audioNode } = this.state;
     const { children, currentNode, id, connections, options, ...rest } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         ...this.state,
-        currentNode: gainNode,
+        currentNode: audioNode,
         onChange: this.onChange
       });
     });

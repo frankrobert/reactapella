@@ -28,13 +28,13 @@ class StereoPanner extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.audioContext && nextProps.currentNode && !prevState.stereoPannerNode) {
-      const stereoPannerNode = new StereoPannerNode(nextProps.audioContext, nextProps.options);
+    if (nextProps.audioContext && nextProps.currentNode && !prevState.audioNode) {
+      const audioNode = new StereoPannerNode(nextProps.audioContext, nextProps.options);
       const value = nextProps.initialValue || 0;
 
-      stereoPannerNode.pan.setValueAtTime(value / 100, 0);
+      audioNode.pan.setValueAtTime(value / 100, 0);
       
-      return { stereoPannerNode, value };
+      return { audioNode, value };
     }
 
     return null;
@@ -42,59 +42,73 @@ class StereoPanner extends Component {
 
   state = {
     value: null,
-    stereoPannerNode: null
+    audioNode: null
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.stereoPannerNode && this.state.stereoPannerNode) {
-      this.props.currentNode.connect(this.state.stereoPannerNode);
+    if (!prevState.audioNode && this.state.audioNode) {
+      this.props.currentNode.connect(this.state.audioNode);
 
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.stereoPannerNode, this);
-      if (prevProps.destination) this.state.stereoPannerNode.connect(prevProps.audioContext.destination);
+      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
+      if (prevProps.destination) this.state.audioNode.connect(prevProps.audioContext.destination);
 
       if (prevProps.params && prevProps.params.length) {
-        if (Array.isArray(prevProps.params)) {
-          prevProps.params.forEach((param) => {
-            prevProps.currentNode.connect(this.state.stereoPannerNode[param]);
-          });
-        } else {
-          prevProps.currentNode.connect(this.state.stereoPannerNode[prevProps.params]);
-        }
+        this.setupParams(prevProps.params);
       }
 
       if (prevProps.connections && prevProps.connections.length) {
-        prevProps.connections.forEach((connection) => {
-          const { params = [], id } = connection;
-          const node = prevProps.onGetNodeById(id);
-
-          if (params && params.length) {
-            params.forEach((param) => node.connect(this.state.stereoPannerNode[param]));
-          } else {
-            node.connect(this.state.stereoPannerNode);
-          }
-        });
+        this.setupConnections(prevProps.connections);
       }
     }
   }
 
   onChange = (value) => {
     const { onChange, passThrough } = this.props;
-    const { stereoPannerNode } = this.state;
+    const { audioNode } = this.state;
 
     this.setState({ value });
 
-    stereoPannerNode.pan.value = (value / 100) * 2 - 1;
+    audioNode.pan.setValueAtTime((value / 100) * 2 - 1, 0);
     if (passThrough) onChange(value);
   };
 
+  setupParams = (params) => {
+    const { currentNode } = this.props;
+
+    if (Array.isArray(params)) {
+      params.forEach((param) => currentNode.connect(this.state.audioNode[param]));
+    } else {
+      currentNode.connect(this.state.audioNode[params]);
+    }
+  }
+
+  setupConnections = (connections) => {
+    const { onGetNodeById } = this.props;
+    const nodes = connections
+      .map((connection) => onGetNodeById(connection.id))
+      .filter(Boolean);
+
+    if (!nodes.length || nodes.length !== connections.length) {
+      return setTimeout(() => this.setupConnections(connections), 300);
+    }
+
+    nodes.forEach((node, i) => {
+      if (connections[i].params && connections[i].params.length) {
+        connections[i].params.forEach((param) => this.state.audioNode.connect(node[param]));
+      } else {
+        this.state.audioNode.connect(node);
+      }
+    });
+  }
+
   render() {
-    const { stereoPannerNode } = this.state;
+    const { audioNode } = this.state;
     const { children, currentNode, options, id, connections, params, destination, passThrough, ...rest } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         ...this.state,
-        currentNode: stereoPannerNode,
+        currentNode: audioNode,
         onChange: this.onChange
       });
     });

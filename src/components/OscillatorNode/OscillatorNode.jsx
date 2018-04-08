@@ -28,10 +28,10 @@ class Oscillator extends Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.audioContext && !prevState.oscillatorNode) {
-      const oscillatorNode = new OscillatorNode(nextProps.audioContext, nextProps.options);
+    if (nextProps.audioContext && !prevState.audioNode) {
+      const audioNode = new OscillatorNode(nextProps.audioContext, nextProps.options);
 
-      return { oscillatorNode };
+      return { audioNode };
     }
 
     return null;
@@ -39,13 +39,13 @@ class Oscillator extends Component {
 
   state = {
     value: null,
-    oscillatorNode: null
+    audioNode: null
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.oscillatorNode && this.state.oscillatorNode) {
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.oscillatorNode, this);
-      if (prevProps.destination) this.state.oscillatorNode.connect(prevProps.audioContext.destination);
+    if (!prevState.audioNode && this.state.audioNode) {
+      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
+      if (prevProps.destination) this.state.audioNode.connect(prevProps.audioContext.destination);
 
       if (prevProps.connections && prevProps.connections.length) {
         this.setupConnections(prevProps.connections);
@@ -66,9 +66,9 @@ class Oscillator extends Component {
   // };
 
   onClick = () => {
-    const { oscillatorNode } = this.state;
+    const { audioNode } = this.state;
 
-    oscillatorNode.start();
+    audioNode.start();
   }
 
 
@@ -84,22 +84,22 @@ class Oscillator extends Component {
 
     nodes.forEach((node, i) => {
       if (connections[i].params && connections[i].params.length) {
-        connections[i].params.forEach((param) => this.state.oscillatorNode.connect(node[param]));
+        connections[i].params.forEach((param) => this.state.audioNode.connect(node[param]));
       } else {
-        this.state.oscillatorNode.connect(node);
+        this.state.audioNode.connect(node);
       }
     });
   }
 
   render() {
-    const { oscillatorNode } = this.state;
+    const { audioNode } = this.state;
     const { children, currentNode, options, connections, ...rest } = this.props;
 
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         ...this.state,
-        currentNode: oscillatorNode,
+        currentNode: audioNode,
         // onChange: this.onChange
         onClick: this.onClick
       });
