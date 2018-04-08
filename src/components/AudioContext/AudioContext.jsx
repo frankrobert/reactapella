@@ -36,24 +36,31 @@ class AudioContext extends Component {
     this.setState({ audioContext });
   };
 
-  setNodeById = (id, node) => {
+  setNodeById = (id, node, component) => {
     const ids = this.nodeList.map((ref) => ref.id);
 
-    if (!ids.includes(id)) this.nodeList.push({ id, node });
+    if (!ids.includes(id)) this.nodeList.push({ id, node, component });
   }
 
   getNodeById = (id) => {
-    const { node } = this.nodeList.find((ref) => ref.id === id);
+    const { node } = this.nodeList.find((ref) => ref.id === id) || {};
 
     return node;
   };
+
+  getComponentById = (id) => {
+    const { component } = this.nodeList.find((ref) => ref.id === id) || {};
+
+    return component;
+  }
 
   render() {
     const children = React.Children.map(this.props.children, (child) => {
       return React.cloneElement(child, {
         ...this.state,
         onSetNodeById: this.setNodeById,
-        onGetNodeById: this.getNodeById
+        onGetNodeById: this.getNodeById,
+        onGetComponentById: this.getComponentById
       });
     });
 

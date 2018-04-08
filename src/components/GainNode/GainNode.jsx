@@ -23,8 +23,8 @@ class Gain extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.audioContext && nextProps.currentNode && !prevState.gainNode) {
-      const gainNode = new GainNode(nextProps.audioContext, ...nextProps.options);
-      const value = nextProps.initialValue || 0;
+      const gainNode = new GainNode(nextProps.audioContext, nextProps.options);
+      const value = nextProps.initialValue || 100;
 
       gainNode.gain.setValueAtTime(value / 100, 0);
       
@@ -43,7 +43,7 @@ class Gain extends Component {
     if (!prevState.gainNode && this.state.gainNode) {
       this.props.currentNode.connect(this.state.gainNode);
 
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.gainNode);
+      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.gainNode, this);
       if (prevProps.destination) this.state.gainNode.connect(prevProps.audioContext.destination);
       if (prevProps.connections && prevProps.connections.length) {
         prevProps.connections.forEach((connection) => {
@@ -78,7 +78,7 @@ class Gain extends Component {
 
   render() {
     const { gainNode } = this.state;
-    const { children, currentNode, ...rest } = this.props;
+    const { children, currentNode, id, connections, options, ...rest } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,

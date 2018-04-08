@@ -7,6 +7,8 @@ import AudioSource from '../AudioSource/AudioSource';
 import AnalyserNode from '../AnalyserNode/AnalyserNode';
 import StereoPanner from '../StereoPanner/StereoPanner';
 import GainNode from '../GainNode/GainNode';
+import RemoteControl from '../RemoteControl/RemoteControl';
+import Button from '../Button/Button';
 import Meter from '../Meter/Meter';
 import Knob from '../Knob/Knob';
 
@@ -79,18 +81,35 @@ stories
       </AudioSource>
     </AudioContext>
   ))
-  .add('with Wet/Dry', () => (
-    <AudioContext>
-      <AudioSource source={text('Source', 'file')}>
-        <GainNode initialValue={number('InitialValue', 100)}>
-          <StereoPanner passThrough destination>
-            <GainNode />
-            <Knob
-              degreeRange={number('Degree Range #2', 180)}
-              degreeOffset={number('Degree Offset #2', 90)}
-            />
-          </StereoPanner>
-        </GainNode>
-      </AudioSource>
-    </AudioContext>
-  ));
+  .add('with Wet/Dry', () => {
+    return (
+      <AudioContext>
+        <AudioSource source={text('Source', 'microphone')}>
+          <GainNode>
+            <StereoPanner id="panner">
+              <GainNode id="wetMix" initialValue={50} destination>
+                <RemoteControl links={[{ id: 'dryMix', rateOfChange: 'inverted' }]}>
+                  <Knob />
+                </RemoteControl>
+              </GainNode>
+            </StereoPanner>
+            <GainNode
+              id="dryMix"
+              initialValue={50}
+            >
+              <AnalyserNode destination>
+                <Meter />
+              </AnalyserNode>
+            </GainNode>
+          </GainNode>
+        </AudioSource>
+        <AudioSource
+          source="oscillator"
+          options={{ frequency: 4 }}
+          connections={[{ id: 'panner', params: ['pan'] }]}
+        >
+          <Button />
+        </AudioSource>
+      </AudioContext>
+    );
+  });

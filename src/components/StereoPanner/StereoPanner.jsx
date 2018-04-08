@@ -29,10 +29,10 @@ class StereoPanner extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.audioContext && nextProps.currentNode && !prevState.stereoPannerNode) {
-      const stereoPannerNode = new StereoPannerNode(nextProps.audioContext, ...nextProps.options);
+      const stereoPannerNode = new StereoPannerNode(nextProps.audioContext, nextProps.options);
       const value = nextProps.initialValue || 0;
 
-      stereoPannerNode.pan.value = value / 100;
+      stereoPannerNode.pan.setValueAtTime(value / 100, 0);
       
       return { stereoPannerNode, value };
     }
@@ -49,7 +49,7 @@ class StereoPanner extends Component {
     if (!prevState.stereoPannerNode && this.state.stereoPannerNode) {
       this.props.currentNode.connect(this.state.stereoPannerNode);
 
-      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.stereoPannerNode);
+      if (prevProps.id) this.props.onSetNodeById(prevProps.id, this.state.stereoPannerNode, this);
       if (prevProps.destination) this.state.stereoPannerNode.connect(prevProps.audioContext.destination);
 
       if (prevProps.params && prevProps.params.length) {
@@ -89,7 +89,7 @@ class StereoPanner extends Component {
 
   render() {
     const { stereoPannerNode } = this.state;
-    const { children, currentNode, ...rest } = this.props;
+    const { children, currentNode, options, id, connections, params, destination, passThrough, ...rest } = this.props;
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
