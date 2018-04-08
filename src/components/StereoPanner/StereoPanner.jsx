@@ -84,9 +84,7 @@ class StereoPanner extends Component {
 
   setupConnections = (connections) => {
     const { onGetNodeById } = this.props;
-    const nodes = connections
-      .map((connection) => onGetNodeById(connection.id))
-      .filter(Boolean);
+    const nodes = connections.filter((connection) => onGetNodeById(connection.id))
 
     if (!nodes.length || nodes.length !== connections.length) {
       return setTimeout(() => this.setupConnections(connections), 300);
