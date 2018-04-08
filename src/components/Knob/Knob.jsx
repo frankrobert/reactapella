@@ -15,21 +15,24 @@ const KnobWrapper = styled.div`
   background-color:#39B4CC;
   background-image:
     ${(props) => {
-      const degree = props.degreeOffset
-        + (props.divisions > 1 ? props.getClosest(props.value) : props.value)
-        * (props.degreeRange / 100 || 3.6)
-        + 180 || -180;
+      const value = props.divisions > 1 ? props.getClosest(props.value) : props.value;
+      let degreeRange = props.degreeRange;
 
-      if (degree <= 360) {
+      if (degreeRange > 360) degreeRange -= 360;
+      else if (degreeRange < 0) degreeRange += 360;
+
+      const degree = value / 100 * (degreeRange) + props.degreeOffset;
+
+      if (degree <= 180) {
         return `
-        linear-gradient(${90 + degree}deg, transparent 50%, #A2ECFB 50%),
+        linear-gradient(${-90 + degree}deg, transparent 50%, #A2ECFB 50%),
         linear-gradient(${props.degreeOffset - 90}deg, #A2ECFB 50%, transparent 50%);
         `
       }
 
       return `
-        linear-gradient(${-90 - props.degreeOffset}deg, transparent 50%, #39B4CC 50%),
-        linear-gradient(${-90 + degree}deg, #A2ECFB 50%, transparent 50%);
+        linear-gradient(${degree + 90}deg, transparent 50%, #39B4CC 50%),
+        linear-gradient(${props.degreeOffset + 270}deg, #A2ECFB 50%, transparent 50%);
         `
     }}
 
@@ -46,14 +49,15 @@ const InnerDial = styled.div`
   border-radius: 50%;
   border: 2px solid #222;
   background-color: #193856;
-  transform: translate(-50%, -50%) rotate(
+  transform: translate(-50%, -50%) scale(-1) rotate(
     ${(props) => {
-      return (
-        props.degreeOffset +
-          (props.divisions > 1 ? props.getClosest(props.value) : props.value) *
-            (props.degreeRange / 100 || 3.6) +
-          180 || -180
-      );
+      const value = props.divisions > 1 ? props.getClosest(props.value) : props.value;
+      let degreeRange = props.degreeRange;
+
+      if (degreeRange > 360) degreeRange -= 360;
+      else if (degreeRange < 0) degreeRange += 360;
+
+      return value / 100 * (degreeRange) + props.degreeOffset;
     }}deg
   );
   ${(props) => {
