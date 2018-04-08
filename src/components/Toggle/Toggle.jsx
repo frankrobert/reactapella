@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import COLORS from '../../constants/colors';
 
 const Slider = styled.div`
   ${(props) =>
     props.toggled
-      ? 'background: #629b89;'
-      : 'background: #7a2e48;'} border: 2px solid #222;
+      ? `background: ${COLORS.GREEN};`
+      : `background: ${COLORS.RED};`}
+  border: 2px solid #222;
   height: 40px;
   width: 130px;
   border-radius: 20px;
@@ -19,7 +21,7 @@ const Slider = styled.div`
       ${(props) =>
         props.toggled
           ? 'transform: translate(200%, -50%) scale(1.05, 1.05);'
-          : 'transform: translate(0, -50%) scale(1.05, 1.05);'};
+          : 'transform: translate(0, -50%) scale(1.05, 1.05);'}
     }
   }
 `;

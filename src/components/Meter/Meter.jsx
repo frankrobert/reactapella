@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import COLORS from '../../constants/colors';
 
 const Canvas = styled.canvas.attrs({
   width: (props) => props.width,
@@ -43,7 +44,7 @@ class Meter extends Component {
 
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.strokeRect(0, 0, this.width, this.height);
-    this.ctx.fillStyle = 'green';
+    this.ctx.fillStyle = COLORS.GREEN;
     this.ctx.fillRect(0, 0, value * (this.width / 100), this.height);
   };
 

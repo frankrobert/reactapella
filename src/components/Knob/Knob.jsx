@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import COLORS from '../../constants/colors';
 
 // TODO FIX DIAL ANIMATION
 const KnobWrapper = styled.div`
@@ -12,7 +13,7 @@ const KnobWrapper = styled.div`
   border: 2px solid #222;
   position: relative;
   box-shadow: 0px 0px 20px 0px #63535b;
-  background-color:#39B4CC;
+  background-color: ${COLORS.LIGHT_GREEN};
   background-image:
     ${(props) => {
       const value = props.divisions > 1 ? props.getClosest(props.value) : props.value;
@@ -25,14 +26,14 @@ const KnobWrapper = styled.div`
 
       if (degree <= 180) {
         return `
-        linear-gradient(${-90 + degree}deg, transparent 50%, #A2ECFB 50%),
-        linear-gradient(${props.degreeOffset - 90}deg, #A2ECFB 50%, transparent 50%);
+        linear-gradient(${-90 + degree}deg, transparent 50%, ${COLORS.YELLOW} 50%),
+        linear-gradient(${props.degreeOffset - 90}deg, ${COLORS.YELLOW} 50%, transparent 50%);
         `
       }
 
       return `
-        linear-gradient(${degree + 90}deg, transparent 50%, #39B4CC 50%),
-        linear-gradient(${props.degreeOffset + 270}deg, #A2ECFB 50%, transparent 50%);
+        linear-gradient(${degree + 90}deg, transparent 50%, ${COLORS.LIGHT_GREEN} 50%),
+        linear-gradient(${props.degreeOffset + 270}deg, ${COLORS.YELLOW} 50%, transparent 50%);
         `
     }}
 
@@ -48,7 +49,7 @@ const InnerDial = styled.div`
   width: 180px;
   border-radius: 50%;
   border: 2px solid #222;
-  background-color: #193856;
+  background-color: ${COLORS.GREEN};
   transform: translate(-50%, -50%) scale(-1) rotate(
     ${(props) => {
       const value = props.divisions > 1 ? props.getClosest(props.value) : props.value;

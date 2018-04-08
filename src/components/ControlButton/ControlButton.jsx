@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Button from '../Button/Button';
+import COLORS from '../../constants/colors';
 
 const ActiveText = styled.p`
-  color: #fff;
+  color: ${COLORS.WHITE};
   font-weight: bold;
   font-size: 16px;
   left: 50%;
@@ -16,7 +17,7 @@ const ActiveText = styled.p`
 const ActiveState = styled.div`
   height: 30px;
   width: 30px;
-  background-color: ${(props) => (props.isActive ? '#629B89' : '#FCD4A9')};
+  background-color: ${(props) => (props.isActive ? COLORS.GREEN : COLORS.YELLOW)};
   border-radius: 50%;
   border: 2px solid #222;
   position: absolute;
