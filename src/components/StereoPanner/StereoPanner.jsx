@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class Gain extends Component {
+class StereoPanner extends Component {
   static propTypes = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
@@ -14,7 +14,10 @@ class Gain extends Component {
     onSetNodeById: PropTypes.func,
     onGetNodeById: PropTypes.func,
     connections: PropTypes.array,
-    options: PropTypes.object
+    options: PropTypes.object,
+    onChange: PropTypes.func,
+    passThrough: PropTypes.bool,
+    params: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
   };
 
   static defaultProps = {
@@ -27,10 +30,13 @@ class Gain extends Component {
       nextProps.currentNode &&
       !prevState.audioNode
     ) {
-      const audioNode = new GainNode(nextProps.audioContext, nextProps.options);
-      const value = nextProps.initialValue || 100;
+      const audioNode = new StereoPannerNode(
+        nextProps.audioContext,
+        nextProps.options
+      );
+      const value = nextProps.initialValue || 0;
 
-      audioNode.gain.setValueAtTime(value / 100, 0);
+      audioNode.pan.setValueAtTime(value / 100, 0);
 
       return { audioNode, value };
     }
@@ -51,6 +57,11 @@ class Gain extends Component {
         this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
       if (prevProps.destination)
         this.state.audioNode.connect(prevProps.audioContext.destination);
+
+      if (prevProps.params && prevProps.params.length) {
+        this.setupParams(prevProps.params);
+      }
+
       if (prevProps.connections && prevProps.connections.length) {
         this.setupConnections(prevProps.connections);
       }
@@ -58,19 +69,25 @@ class Gain extends Component {
   }
 
   onChange = (value) => {
-    const { audioContext } = this.props;
+    const { onChange, passThrough } = this.props;
     const { audioNode } = this.state;
 
     this.setState({ value });
 
-    let newValue = value / 100;
+    audioNode.pan.setValueAtTime(value / 100 * 2 - 1, 0);
+    if (passThrough) onChange(value);
+  };
 
-    if (newValue === 0) newValue = 0.01;
+  setupParams = (params) => {
+    const { currentNode } = this.props;
 
-    audioNode.gain.exponentialRampToValueAtTime(
-      newValue,
-      audioContext.currentTime
-    );
+    if (Array.isArray(params)) {
+      params.forEach((param) =>
+        currentNode.connect(this.state.audioNode[param])
+      );
+    } else {
+      currentNode.connect(this.state.audioNode[params]);
+    }
   };
 
   setupConnections = (connections) => {
@@ -99,9 +116,12 @@ class Gain extends Component {
     const {
       children,
       currentNode,
+      options,
       id,
       connections,
-      options,
+      params,
+      destination,
+      passThrough,
       ...rest
     } = this.props;
     const newElements = React.Children.map(children, (child) => {
@@ -119,4 +139,4 @@ class Gain extends Component {
   }
 }
 
-export default Gain;
+export default StereoPanner;

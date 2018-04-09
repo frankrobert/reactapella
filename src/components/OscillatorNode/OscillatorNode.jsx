@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-class Gain extends Component {
+class Oscillator extends Component {
   static propTypes = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
@@ -14,7 +14,10 @@ class Gain extends Component {
     onSetNodeById: PropTypes.func,
     onGetNodeById: PropTypes.func,
     connections: PropTypes.array,
-    options: PropTypes.object
+    options: PropTypes.object,
+    onChange: PropTypes.func,
+    passThrough: PropTypes.bool,
+    params: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
   };
 
   static defaultProps = {
@@ -22,17 +25,13 @@ class Gain extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (
-      nextProps.audioContext &&
-      nextProps.currentNode &&
-      !prevState.audioNode
-    ) {
-      const audioNode = new GainNode(nextProps.audioContext, nextProps.options);
-      const value = nextProps.initialValue || 100;
+    if (nextProps.audioContext && !prevState.audioNode) {
+      const audioNode = new OscillatorNode(
+        nextProps.audioContext,
+        nextProps.options
+      );
 
-      audioNode.gain.setValueAtTime(value / 100, 0);
-
-      return { audioNode, value };
+      return { audioNode };
     }
 
     return null;
@@ -45,32 +44,32 @@ class Gain extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevState.audioNode && this.state.audioNode) {
-      this.props.currentNode.connect(this.state.audioNode);
-
       if (prevProps.id)
         this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
       if (prevProps.destination)
         this.state.audioNode.connect(prevProps.audioContext.destination);
+
       if (prevProps.connections && prevProps.connections.length) {
         this.setupConnections(prevProps.connections);
       }
     }
   }
 
-  onChange = (value) => {
-    const { audioContext } = this.props;
+  // TODO: review this
+  // onChange = (value) => {
+  //   const { onChange, passThrough } = this.props;
+  //   const { oscillatorNode } = this.state;
+
+  //   this.setState({ value });
+
+  //   oscillatorNode.pan.value = (value / 100) * 2 - 1;
+  //   if (passThrough) onChange(value);
+  // };
+
+  onClick = () => {
     const { audioNode } = this.state;
 
-    this.setState({ value });
-
-    let newValue = value / 100;
-
-    if (newValue === 0) newValue = 0.01;
-
-    audioNode.gain.exponentialRampToValueAtTime(
-      newValue,
-      audioContext.currentTime
-    );
+    audioNode.start();
   };
 
   setupConnections = (connections) => {
@@ -96,20 +95,15 @@ class Gain extends Component {
 
   render() {
     const { audioNode } = this.state;
-    const {
-      children,
-      currentNode,
-      id,
-      connections,
-      options,
-      ...rest
-    } = this.props;
+    const { children, currentNode, options, connections, ...rest } = this.props;
+
     const newElements = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         ...this.state,
         currentNode: audioNode,
-        onChange: this.onChange
+        // onChange: this.onChange
+        onClick: this.onClick
       });
     });
 
@@ -119,4 +113,4 @@ class Gain extends Component {
   }
 }
 
-export default Gain;
+export default Oscillator;

@@ -8,4 +8,4 @@ const stories = storiesOf('Previous', module);
 
 stories.addDecorator(withKnobs).addDecorator(centered);
 
-stories.add('with default values', () => <Previous />)
+stories.add('with default values', () => <Previous />);

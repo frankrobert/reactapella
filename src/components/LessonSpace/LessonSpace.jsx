@@ -17,7 +17,7 @@ const OuterText = styled.div`
 
 const TextArea = styled.div`
   overflow-y: auto;
-  padding: 10px 30px;  
+  padding: 10px 30px;
   height: 500px;
   ::-webkit-scrollbar {
     width: 10px;
@@ -52,7 +52,10 @@ const Buttons = styled.div`
     transform: translateY(0);
   }
 
-  ${(props) => props.isScrolling ? 'transform: translateY(0)' : 'transform: translateY(100%);'}
+  ${(props) =>
+    props.isScrolling
+      ? 'transform: translateY(0)'
+      : 'transform: translateY(100%);'};
 `;
 
 const Title = styled.h3`
@@ -81,7 +84,10 @@ class LessonSpace extends Component {
     clearTimeout(this.scrolling);
     this.setState({ isScrolling: true });
 
-    this.scrolling = setTimeout(() => this.setState({ isScrolling: false }), 100)
+    this.scrolling = setTimeout(
+      () => this.setState({ isScrolling: false }),
+      100
+    );
   };
 
   render() {
@@ -89,22 +95,20 @@ class LessonSpace extends Component {
     const { lessonText, title } = this.props;
 
     return (
-      <OuterText
-        onWheel={this.updateOnScroll}
-      >
+      <OuterText onWheel={this.updateOnScroll}>
         <TextArea>
           <Title>{title}</Title>
           {lessonText}
         </TextArea>
         <Buttons
-          innerRef={(e) => this.buttons = e} // eslint-disable-line
+          innerRef={(e) => (this.buttons = e)} // eslint-disable-line
           isScrolling={isScrolling}
         >
           <Previous />
           <Next />
         </Buttons>
       </OuterText>
-    )
+    );
   }
 }
 

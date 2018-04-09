@@ -6,9 +6,9 @@ class FileUpload extends Component {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
-    ]).isRequired,
-    audioContext: PropTypes.object.isRequired,
-    audioDestination: PropTypes.object.isRequired
+    ]),
+    audioContext: PropTypes.object,
+    audioDestination: PropTypes.object
   };
 
   state = {
@@ -33,7 +33,9 @@ class FileUpload extends Component {
       return setTimeout(this.getAudioElementSource, 50);
     }
 
-    const audioSource = audioContext.createMediaElementSource(this.audioElement);
+    const audioSource = audioContext.createMediaElementSource(
+      this.audioElement
+    );
 
     this.setState({ audioSource });
   };
@@ -54,7 +56,12 @@ class FileUpload extends Component {
       return (
         <div>
           {/* eslint-disable-next-line */}
-          <audio controls ref={(e) => {this.audioElement = e}}>
+          <audio
+            controls
+            ref={(e) => {
+              this.audioElement = e;
+            }}
+          >
             <source src={URL.createObjectURL(file)} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
@@ -63,7 +70,14 @@ class FileUpload extends Component {
       );
     }
 
-    return <input ref={(e) => this.input = e} type="file" id="input" onChange={this.onChange} />; // eslint-disable-line
+    return (
+      <input
+        ref={(e) => (this.input = e)} // eslint-disable-line
+        type="file"
+        id="input"
+        onChange={this.onChange}
+      />
+    );
   }
 }
 

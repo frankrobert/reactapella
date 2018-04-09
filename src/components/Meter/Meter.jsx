@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import COLORS from '../../constants/colors';
 
 const Canvas = styled.canvas.attrs({
   width: (props) => props.width,
@@ -12,7 +13,8 @@ const Canvas = styled.canvas.attrs({
 class Meter extends Component {
   static propTypes = {
     value: PropTypes.number,
-    vertical: PropTypes.bool
+    vertical: PropTypes.bool,
+    isClipping: PropTypes.bool
   };
 
   static defaultProps = {
@@ -33,17 +35,20 @@ class Meter extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.value !== this.props.value) {
+    if (
+      nextProps.isClipping !== this.props.isClipping ||
+      nextProps.value !== this.props.value
+    ) {
       window.requestAnimationFrame(this.updateMeter);
     }
   }
 
   updateMeter = () => {
-    const { value } = this.props;
+    const { isClipping, value } = this.props;
 
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.strokeRect(0, 0, this.width, this.height);
-    this.ctx.fillStyle = 'green';
+    this.ctx.fillStyle = isClipping ? COLORS.RED : COLORS.GREEN;
     this.ctx.fillRect(0, 0, value * (this.width / 100), this.height);
   };
 

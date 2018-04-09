@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import COLORS from '../../constants/colors';
 
 const Button = styled.button`
   width: 200px;
@@ -6,7 +7,7 @@ const Button = styled.button`
   color: #fff;
   border: 2px solid #222;
   border-radius: 25px;
-  background-color: #7a2e48;
+  background-color: ${COLORS.RED};
   cursor: pointer;
   position: relative;
   transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);

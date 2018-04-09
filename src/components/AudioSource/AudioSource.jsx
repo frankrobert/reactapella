@@ -2,15 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Microphone from '../Microphone/Microphone';
 import FileUpload from '../FileUpload/FileUpload';
+import OscillatorNode from '../OscillatorNode/OscillatorNode';
 
 const AudioSource = ({ children, source, ...rest }) => {
-  switch(source) {
-    case 'microphone':
+  switch (source) {
+    case 'microphone': {
       return <Microphone {...rest}>{children}</Microphone>;
-    case 'file':
+    }
+    case 'file': {
       return <FileUpload {...rest}>{children}</FileUpload>;
-    default:
+    }
+    case 'oscillator': {
+      return <OscillatorNode {...rest}>{children}</OscillatorNode>;
+    }
+    default: {
       return children;
+    }
   }
 };
 
