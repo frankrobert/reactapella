@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-import COLORS from '../../constants/colors';
+import { COLORS } from '../../constants/constants';
 
 // TODO FIX DIAL ANIMATION
 const KnobWrapper = styled.div`

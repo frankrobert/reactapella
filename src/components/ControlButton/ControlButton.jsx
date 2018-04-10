@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Button from '../Button/Button';
-import COLORS from '../../constants/colors';
+import { COLORS } from '../../constants/constants';
 
 const ActiveText = styled.p`
   color: ${COLORS.WHITE};

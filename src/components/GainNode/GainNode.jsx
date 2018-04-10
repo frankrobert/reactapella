@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { FUTURE_EVENT } from '../../constants/constants';
 
 class Gain extends Component {
   static propTypes = {
@@ -69,7 +70,7 @@ class Gain extends Component {
 
     audioNode.gain.exponentialRampToValueAtTime(
       newValue,
-      audioContext.currentTime
+      audioContext.currentTime + FUTURE_EVENT
     );
   };
 

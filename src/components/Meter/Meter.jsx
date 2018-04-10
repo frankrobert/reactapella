@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import COLORS from '../../constants/colors';
+import { COLORS } from '../../constants/constants';
 
 const Canvas = styled.canvas.attrs({
   width: (props) => props.width,
