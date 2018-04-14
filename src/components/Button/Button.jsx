@@ -2,19 +2,20 @@ import styled from 'styled-components';
 import { COLORS } from '../../constants/constants';
 
 const Button = styled.button`
-  width: 200px;
-  height: 200px;
-  color: #fff;
+  width: 120px;
+  height: 40px;
+  color: ${COLORS.WHITE};
   border: 2px solid #222;
-  border-radius: 25px;
+  border-radius: 10px;
   background-color: ${COLORS.RED};
   cursor: pointer;
   position: relative;
-  transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: all 0.1s ease-in-out;
 
   &:hover {
-    box-shadow: 0px 0px 20px 0px #63535b;
-    transform: scale(1.01, 1.01);
+    box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+    filter: brightness(90%);
+    transform: translateY(-2px) scale(1.01, 1.01);
   }
 
   &:focus {

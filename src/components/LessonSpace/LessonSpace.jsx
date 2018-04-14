@@ -3,16 +3,28 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Next from '../Next/Next';
 import Previous from '../Previous/Previous';
+import { COLORS } from '../../constants/constants';
 
 const OuterText = styled.div`
   overflow: hidden;
-  border: 2px solid #222;
-  background-color: #fff;
-  border-radius: 25px;
-  box-shadow: 0px 0px 20px 0px #000;
-  width: 300px;
+  background-color: ${COLORS.WHITE};
+  border-radius: 10px;
+  box-shadow: 0 3px 2px 0 rgba(0, 0, 0, 0.05);
+  width: 600px;
   font-size: 14px;
   position: relative;
+  font-family: 'Segoe UI', 'Open Sans', 'Roboto', sans-serif;
+
+  &::before {
+    content: '';
+    background: -webkit-linear-gradient(left, ${COLORS.GREEN} 0%, ${COLORS.LIGHT_GREEN} 100%);
+    background: linear-gradient(to right, ${COLORS.GREEN} 0%, ${COLORS.LIGHT_GREEN} 100%);
+    position: absolute;
+    top: 0;
+    display: block;
+    height: 10px;
+    width: 100%;
+  }
 `;
 
 const TextArea = styled.div`
@@ -23,7 +35,7 @@ const TextArea = styled.div`
     width: 10px;
   }
   ::-webkit-scrollbar-track {
-    background-color: var(--color-white);
+    background-color: ${COLORS.WHITE};
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     width: 10px;
@@ -37,7 +49,8 @@ const TextArea = styled.div`
 `;
 
 const Buttons = styled.div`
-  background-color: #d5d6d6;
+  background: -webkit-linear-gradient(left, ${COLORS.GREEN} 0%, ${COLORS.LIGHT_GREEN} 100%);
+  background: linear-gradient(to right, ${COLORS.GREEN} 0%, ${COLORS.LIGHT_GREEN} 100%);
   border-top: 1px solid #222;
   display: flex;
   justify-content: space-around;

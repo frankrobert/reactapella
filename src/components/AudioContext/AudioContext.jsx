@@ -19,7 +19,7 @@ class AudioContext extends Component {
   };
 
   componentDidMount() {
-    this.getAudioContext();
+    this.setAudioContext();
   }
 
   componentWillUnmount() {
@@ -28,7 +28,7 @@ class AudioContext extends Component {
     audioContext.close();
   }
 
-  getAudioContext = () => {
+  setAudioContext = () => {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
     const audioContext = new window.AudioContext();

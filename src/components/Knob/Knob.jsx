@@ -13,42 +13,10 @@ const KnobWrapper = styled.div`
   border: 2px solid #222;
   position: relative;
   box-shadow: 0px 0px 20px 0px #63535b;
-  background-color: ${COLORS.LIGHT_GREEN};
-  background-image: ${(props) => {
-      const value =
-        props.divisions > 1 ? props.getClosest(props.value) : props.value;
-      let degreeRange = props.degreeRange;
+`;
 
-      if (degreeRange > 360) degreeRange -= 360;
-      else if (degreeRange < 0) degreeRange += 360;
-
-      const degree = value / 100 * degreeRange + props.degreeOffset;
-
-      if (degree <= 180) {
-        return `
-        linear-gradient(${-90 + degree}deg, transparent 50%, ${
-          COLORS.YELLOW
-        } 50%),
-        linear-gradient(${props.degreeOffset - 90}deg, ${
-          COLORS.YELLOW
-        } 50%, transparent 50%);
-        `;
-      }
-
-      return `
-        linear-gradient(${degree + 90}deg, transparent 50%, ${
-        COLORS.LIGHT_GREEN
-      } 50%),
-        linear-gradient(${props.degreeOffset + 270}deg, ${
-        COLORS.YELLOW
-      } 50%, transparent 50%);
-        `;
-    }}
-    ${(props) => {
-      return !props.isDragging && !props.isScrolling && props.valueSnapping
-        ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);'
-        : 'transition: null;';
-    }};
+const ProgressRing = styled.canvas.attrs({ width: 200, height: 200 })`
+  z-index: 10;
 `;
 
 const InnerDial = styled.div`
@@ -74,7 +42,8 @@ const InnerDial = styled.div`
     return !props.isDragging && !props.isScrolling && props.valueSnapping
       ? 'transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);'
       : 'transition: null;';
-  }} position: absolute;
+  }}
+  position: absolute;
   left: 50%;
   top: 50%;
 `;
@@ -103,6 +72,7 @@ class KnobInput extends Component {
   constructor(props) {
     super(props);
     this.scrolling = null;
+    this.ctx = null;
   }
 
   state = {
@@ -134,7 +104,7 @@ class KnobInput extends Component {
 
   onMouseMove = (e) => {
     const { isDragging, dragPosition } = this.state;
-    const { onChange, min, max, value } = this.props;
+    const { min, max, value } = this.props;
     const oldDragValue = { ...dragPosition }; // Clone drag
 
     if (!isDragging) return;
@@ -144,19 +114,18 @@ class KnobInput extends Component {
     else if (dragAmount < min) dragAmount = min;
 
     this.setState({ dragPosition: { x: e.pageX, y: e.pageY } });
-    onChange(dragAmount);
+    this.onChange(dragAmount);
   };
 
   onMouseUp = () => {
-    const { initialValue, valueSnapping, onChange } = this.props;
+    const { initialValue, valueSnapping } = this.props;
 
     this.setState({ isDragging: false });
-    if (valueSnapping) onChange(initialValue);
+    if (valueSnapping) this.onChange(initialValue);
   };
 
   updateOnScroll = (e) => {
     const {
-      onChange,
       initialValue,
       max,
       min,
@@ -173,18 +142,46 @@ class KnobInput extends Component {
 
     if (newValue > max) newValue = max;
     else if (newValue < min) newValue = min;
-    onChange(newValue);
+    this.onChange(newValue);
     this.scrolling = valueSnapping
       ? setTimeout(() => {
           this.setState({ isScrolling: false });
-          onChange(initialValue);
+          this.onChange(initialValue);
         }, 100)
       : null;
   };
 
   onChange = (e) => {
+    this.updateArc();
     this.props.onChange(e);
   };
+
+  updateArc = () => {
+    const { divisions, degreeRange, degreeOffset, value } = this.props;
+
+    if (!this.ctx) this.ctx = this.progress.getContext('2d');
+
+    const gradient = this.ctx.createLinearGradient(0,500,0, 0);
+    gradient.addColorStop(0, '#c0e674');
+    gradient.addColorStop(1, '#40d6a5');
+
+    let newValue = divisions > 1 ? this.getClosest(value) : value;
+    let newDegreeRange = degreeRange;
+
+    if (degreeRange > 360) newDegreeRange -= 360;
+    else if (degreeRange < 0) newDegreeRange += 360;
+
+    newValue = value / 100 * newDegreeRange + degreeOffset;
+
+    this.ctx.globalCompositeOperation = 'destination-out';
+
+    this.ctx.beginPath();
+    this.ctx.arc(100, 100, 100, degreeOffset, newValue);
+    this.ctx.strokeStyle = gradient;
+    this.ctx.lineWidth = 5;
+    this.ctx.lineCap = 'round';
+    this.ctx.fill();
+  }
 
   getClosest = (value) => {
     const { divisions, max } = this.props;
@@ -227,18 +224,20 @@ class KnobInput extends Component {
 
     return (
       <KnobWrapper
-        isDragging={isDragging}
-        isScrolling={isScrolling}
-        degreeOffset={degreeOffset}
-        degreeRange={degreeRange}
-        divisions={divisions}
-        value={value}
-        valueSnapping={valueSnapping}
-        getClosest={this.getClosest}
         onWheel={this.updateOnScroll}
-        innerRef={(e) => (this.dial = e)}
         onMouseDown={this.onMouseDown}
       >
+        <ProgressRing
+          innerRef={(e) => this.progress = e} // eslint-disable-line
+          isDragging={isDragging}
+          isScrolling={isScrolling}
+          degreeOffset={degreeOffset}
+          degreeRange={degreeRange}
+          divisions={divisions}
+          value={value}
+          valueSnapping={valueSnapping}
+          getClosest={this.getClosest}
+        />
         <InnerDial
           isDragging={isDragging}
           isScrolling={isScrolling}

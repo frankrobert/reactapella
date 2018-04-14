@@ -15,15 +15,13 @@ const ActiveText = styled.p`
 `;
 
 const ActiveState = styled.div`
-  height: 30px;
-  width: 30px;
+  height: 10px;
+  width: 10px;
   background-color: ${(props) =>
     props.isActive ? COLORS.GREEN : COLORS.YELLOW};
   border-radius: 50%;
   border: 2px solid #222;
   position: absolute;
-  top: 50%;
-  left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
