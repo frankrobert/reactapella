@@ -68,7 +68,7 @@ class Analyser extends Component {
     const { onGetNodeById } = this.props;
     const nodes = connections
       .map((connection) => onGetNodeById(connection.id))
-      .filter(Boolean); // filter out falsey values
+      .filter(Boolean); // filter out falsy values
 
     if (!nodes.length || nodes.length !== connections.length) {
       return setTimeout(() => this.setupConnections(connections), 300);

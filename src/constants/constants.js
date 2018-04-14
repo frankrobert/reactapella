@@ -8,4 +8,4 @@ export const COLORS = {
   BLACK: '#222'
 };
 
-export const FUTURE_EVENT = 0.0000000000000000001;
+export const FUTURE_EVENT = 0.0000000000000000001; // Push to the next available audio event
