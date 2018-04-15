@@ -8,12 +8,13 @@ class Gain extends Component {
     audioContext: PropTypes.object
   };
 
-  onChange = (value, oldRange, param = 'gain') => {
+  onChange = (value, param = 'gain') => {
     const { audioContext } = this.props;
     const { audioNode } = this.state;
 
     this.setState({ [param]: value });
 
+    // TODO: Add rebound
     let computedValue = value / 100;
 
     if (computedValue === 0) computedValue = 0.01;

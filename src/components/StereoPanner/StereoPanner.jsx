@@ -8,10 +8,13 @@ class StereoPanner extends Component {
     audioContext: PropTypes.object
   };
 
-  onChange = (value, oldRange, param = 'pan') => {
+  onChange = (value, param = 'pan') => {
     const { audioContext } = this.props;
     const { audioNode } = this.state;
 
+    // TODO Add rebound
+    // const range = this.getRange(param);
+    // const computedValue = rebound(oldRange, range, value);
     this.setState({ [param]: value });
 
     const computedValue = value / 100 * 2 - 1;
