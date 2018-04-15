@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { COLORS } from '../../constants/constants';
 
-// TODO FIX DIAL ANIMATION
 const KnobWrapper = styled.div`
   max-height: ${({ size }) => size || 200}px;
   height: 200px;
@@ -13,10 +12,6 @@ const KnobWrapper = styled.div`
   border: 2px solid #222;
   position: relative;
   box-shadow: 0px 0px 20px 0px #63535b;
-`;
-
-const ProgressRing = styled.canvas.attrs({ width: 200, height: 200 })`
-  z-index: 10;
 `;
 
 const InnerDial = styled.div`
@@ -28,8 +23,9 @@ const InnerDial = styled.div`
   transform: translate(-50%, -50%) scale(-1)
     rotate(
       ${(props) => {
-        const value =
-          props.divisions > 1 ? props.getClosest(props.value) : props.value;
+        const value = props.divisions > 1
+          ? props.getClosest(props.value)
+          : props.value;
         let degreeRange = props.degreeRange;
 
         if (degreeRange > 360) degreeRange -= 360;
@@ -151,37 +147,10 @@ class KnobInput extends Component {
       : null;
   };
 
-  onChange = (e) => {
-    this.updateArc();
-    this.props.onChange(e);
+  onChange = (value) => {
+    const { min, max } = this.props;
+    this.props.onChange(value, [min, max]);
   };
-
-  updateArc = () => {
-    const { divisions, degreeRange, degreeOffset, value } = this.props;
-
-    if (!this.ctx) this.ctx = this.progress.getContext('2d');
-
-    const gradient = this.ctx.createLinearGradient(0,500,0, 0);
-    gradient.addColorStop(0, '#c0e674');
-    gradient.addColorStop(1, '#40d6a5');
-
-    let newValue = divisions > 1 ? this.getClosest(value) : value;
-    let newDegreeRange = degreeRange;
-
-    if (degreeRange > 360) newDegreeRange -= 360;
-    else if (degreeRange < 0) newDegreeRange += 360;
-
-    newValue = value / 100 * newDegreeRange + degreeOffset;
-
-    this.ctx.globalCompositeOperation = 'destination-out';
-
-    this.ctx.beginPath();
-    this.ctx.arc(100, 100, 100, degreeOffset, newValue);
-    this.ctx.strokeStyle = gradient;
-    this.ctx.lineWidth = 5;
-    this.ctx.lineCap = 'round';
-    this.ctx.fill();
-  }
 
   getClosest = (value) => {
     const { divisions, max } = this.props;
@@ -227,17 +196,6 @@ class KnobInput extends Component {
         onWheel={this.updateOnScroll}
         onMouseDown={this.onMouseDown}
       >
-        <ProgressRing
-          innerRef={(e) => this.progress = e} // eslint-disable-line
-          isDragging={isDragging}
-          isScrolling={isScrolling}
-          degreeOffset={degreeOffset}
-          degreeRange={degreeRange}
-          divisions={divisions}
-          value={value}
-          valueSnapping={valueSnapping}
-          getClosest={this.getClosest}
-        />
         <InnerDial
           isDragging={isDragging}
           isScrolling={isScrolling}
