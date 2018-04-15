@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getDisplayName } from '../../lib/helpers';
 
-export default function createAudioNode(WrappedComponent) {
+export default function createAudioNode(WrappedComponent, AudioNodeConstructor) {
   return class AudioNode extends WrappedComponent {
     static displayName = getDisplayName(WrappedComponent);
     static propTypes = {
@@ -17,12 +17,30 @@ export default function createAudioNode(WrappedComponent) {
       onSetNodeById: PropTypes.func,
       onGetNodeById: PropTypes.func,
       connections: PropTypes.array,
-      options: PropTypes.object
+      options: PropTypes.object,
+      params: PropTypes.oneOfType([PropTypes.array, PropTypes.string])
     };
 
     static defaultProps = {
       options: {}
     };
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+      if (
+        nextProps.audioContext &&
+        nextProps.currentNode &&
+        !prevState.audioNode
+      ) {
+        const audioNode = new AudioNodeConstructor(
+          nextProps.audioContext,
+          nextProps.options
+        );
+
+        return { audioNode };
+      }
+
+      return null;
+    }
 
     componentDidUpdate(prevProps, prevState) {
       if (!prevState.audioNode && this.state.audioNode) {
@@ -32,11 +50,26 @@ export default function createAudioNode(WrappedComponent) {
           this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
         if (prevProps.destination)
           this.state.audioNode.connect(prevProps.audioContext.destination);
+        if (prevProps.params && prevProps.params.length) {
+          this.setupParams(prevProps.params);
+        }
         if (prevProps.connections && prevProps.connections.length) {
           this.setupConnections(prevProps.connections);
         }
       }
     }
+
+    setupParams = (params) => {
+      const { currentNode } = this.props;
+
+      if (Array.isArray(params)) {
+        params.forEach((param) =>
+          currentNode.connect(this.state.audioNode[param])
+        );
+      } else {
+        currentNode.connect(this.state.audioNode[params]);
+      }
+    };
 
     setupConnections = (connections) => {
       const { onGetNodeById } = this.props;
@@ -66,6 +99,8 @@ export default function createAudioNode(WrappedComponent) {
         currentNode,
         id,
         connections,
+        destination,
+        params, // TODO figure out what to name this/how to use it
         options,
         ...rest
       } = this.props;
