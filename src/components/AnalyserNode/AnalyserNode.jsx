@@ -135,7 +135,7 @@ class Analyser extends Component {
   render() {
     const { audioNode, value } = this.state;
     const { children, audioContext, currentNode, ...rest } = this.props;
-    const newElements = React.Children.map(children, (child) => {
+    const childrenWithProps = children && React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         value,
@@ -143,7 +143,7 @@ class Analyser extends Component {
       });
     });
 
-    return newElements;
+    return childrenWithProps || null;
   }
 }
 
