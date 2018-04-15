@@ -20,7 +20,7 @@ class FileUpload extends Component {
     e.stopPropagation();
     e.preventDefault();
 
-    const file = this.input.files[0];
+    const [file] = this.input.files;
 
     this.setState({ file });
     this.getAudioElementSource();

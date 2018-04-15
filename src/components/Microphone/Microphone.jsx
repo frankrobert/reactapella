@@ -61,7 +61,7 @@ class Microphone extends Component {
   render() {
     const { children, ...rest } = this.props;
     const { audioSource } = this.state;
-    const newElements = React.Children.map(children, (child) => {
+    const childrenWithProps = children && React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         ...this.state,
@@ -69,7 +69,7 @@ class Microphone extends Component {
       });
     });
 
-    return newElements;
+    return childrenWithProps || null;
   }
 }
 

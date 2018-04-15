@@ -46,7 +46,12 @@ class Toggle extends Component {
   };
 
   onToggle = () => {
-    this.setState((prevState) => ({ toggled: !prevState.toggled }));
+    const { onClick } = this.props;
+
+    this.setState(
+      (prevState) => ({ toggled: !prevState.toggled }),
+      onClick(this.state.toggled)
+    );
   };
 
   render() {
@@ -67,7 +72,8 @@ class Toggle extends Component {
 }
 
 Toggle.propTypes = {
-  defaultToggled: PropTypes.bool
+  defaultToggled: PropTypes.bool,
+  onClick: PropTypes.func
 };
 
 Toggle.defaultProps = {

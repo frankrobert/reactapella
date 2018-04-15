@@ -55,7 +55,8 @@ class AudioContext extends Component {
   };
 
   render() {
-    const children = React.Children.map(this.props.children, (child) => {
+    const { children } = this.props;
+    const childrenWithAudio = React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...this.state,
         onSetNodeById: this.setNodeById,
@@ -64,7 +65,7 @@ class AudioContext extends Component {
       });
     });
 
-    return children;
+    return childrenWithAudio;
   }
 }
 
