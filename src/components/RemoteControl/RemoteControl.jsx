@@ -7,21 +7,21 @@ class RemoteControl extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
     ]),
-    links: PropTypes.array,
+    controls: PropTypes.array,
     onGetComponentById: PropTypes.func
   };
 
   onChange = (value, range) => {
-    const { links, onGetComponentById } = this.props;
+    const { controls, onGetComponentById } = this.props;
 
-    links.forEach((link) => {
-      const component = onGetComponentById(link.id);
+    controls.forEach((control) => {
+      const component = onGetComponentById(control.id);
       const computedValue = this.calculateComputedValue(
         value,
-        link.rateOfChange
+        control.rateOfChange
       );
 
-      component.onChange(computedValue, link.param, range);
+      component.onChange(computedValue, control.param, range);
     });
   };
 
