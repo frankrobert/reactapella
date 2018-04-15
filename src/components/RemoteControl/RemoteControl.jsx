@@ -8,12 +8,11 @@ class RemoteControl extends Component {
       PropTypes.node
     ]),
     links: PropTypes.array,
-    onGetComponentById: PropTypes.func,
-    onChange: PropTypes.func
+    onGetComponentById: PropTypes.func
   };
 
   onChange = (value) => {
-    const { links, onGetComponentById, onChange } = this.props;
+    const { links, onGetComponentById } = this.props;
 
     links.forEach((link) => {
       const component = onGetComponentById(link.id);
@@ -24,8 +23,6 @@ class RemoteControl extends Component {
 
       component.onChange(computedValue);
     });
-
-    onChange(value);
   };
 
   invertedValue = (value) => {
@@ -46,17 +43,12 @@ class RemoteControl extends Component {
   };
 
   render() {
-    const { children, ...rest } = this.props;
-    const newElements = React.Children.map(children, (child) => {
-      return React.cloneElement(child, {
-        ...rest,
-        onChange: this.onChange
-      });
+    const { children } = this.props;
+    const childrenWithChange = children && React.Children.map(children, (child) => {
+      return React.cloneElement(child, { onChange: this.onChange });
     });
 
-    if (!newElements) return null;
-
-    return newElements;
+    return childrenWithChange || null;
   }
 }
 
