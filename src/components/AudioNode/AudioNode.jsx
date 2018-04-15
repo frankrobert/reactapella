@@ -42,6 +42,10 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
       return null;
     }
 
+    state = {
+      audioNode: null
+    };
+
     componentDidUpdate(prevProps, prevState) {
       if (!prevState.audioNode && this.state.audioNode) {
         this.props.currentNode.connect(this.state.audioNode);
