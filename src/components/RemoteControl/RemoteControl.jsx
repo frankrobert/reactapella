@@ -11,7 +11,7 @@ class RemoteControl extends Component {
     onGetComponentById: PropTypes.func
   };
 
-  onChange = (value) => {
+  onChange = (value, range) => {
     const { links, onGetComponentById } = this.props;
 
     links.forEach((link) => {
@@ -21,7 +21,7 @@ class RemoteControl extends Component {
         link.rateOfChange
       );
 
-      component.onChange(computedValue);
+      component.onChange(computedValue, link.param, range);
     });
   };
 
