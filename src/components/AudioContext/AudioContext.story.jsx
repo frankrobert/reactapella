@@ -81,41 +81,50 @@ stories
       </AudioSource>
     </AudioContext>
   ))
-  .add('with Wet/Dry', () => {
+  .add('with Wet/Dry and controlled UI', () => {
     return (
       <AudioContext>
         <AudioSource source={text('Source', 'file')}>
           <GainNode>
             <StereoPanner id="panner">
-              <GainNode id="wetMix" initialValue={50} destination>
-                <RemoteControl
-                  links={[{ id: 'dryMix', rateOfChange: 'inverted' }]}
-                >
-                  <Knob />
-                </RemoteControl>
-              </GainNode>
+              <GainNode id="wetMix" destination />
             </StereoPanner>
-            <GainNode id="dryMix" initialValue={50}>
+            <GainNode id="dryMix">
               <AnalyserNode
+                id="analyser"
                 options={{
                   smoothingTimeConstant: 0.3,
                   maxDecibels: -10,
                   fftSize: 256
                 }}
                 destination
-              >
-                <Meter />
-              </AnalyserNode>
+              />
             </GainNode>
           </GainNode>
         </AudioSource>
         <AudioSource
+          id="lfo"
           source="oscillator"
           options={{ frequency: 4 }}
           connections={[{ id: 'panner', params: ['pan'] }]}
-        >
-          <Button />
-        </AudioSource>
+        />
+
+        <div style={{ display: 'flex' }}>
+          <RemoteControl controls={[{ id: 'analyser' }]}>
+            <Meter />
+          </RemoteControl>
+          <RemoteControl controls={[{ id: 'lfo' }]}>
+            <Button />
+          </RemoteControl>
+          <RemoteControl controls={
+            [
+              { id: 'dryMix', rateOfChange: 'inverted' },
+              { id: 'wetMix' }
+            ]
+          }>
+            <Knob />
+          </RemoteControl>
+        </div>
       </AudioContext>
     );
   });
