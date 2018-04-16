@@ -11,9 +11,14 @@ class RemoteControl extends Component {
     onGetComponentById: PropTypes.func
   };
 
+  state = {
+    value: null
+  };
+
   onChange = (value, range) => {
     const { controls, onGetComponentById } = this.props;
 
+    console.log('ABOUT TO CHANGE');
     controls.forEach((control) => {
       const component = onGetComponentById(control.id);
       const computedValue = this.calculateComputedValue(
@@ -21,14 +26,37 @@ class RemoteControl extends Component {
         control.rateOfChange
       );
 
-      component.onChange(computedValue, control.param, range);
+      if (component.onChange) component.onChange(computedValue, control.param, range);
+
+      this.setState({ value });
     });
   };
 
-  invertedValue = (value) => {
-    if (value === 50) return value;
+  onClick = (value) => {
+    const { controls, onGetComponentById } = this.props;
 
-    return 100 - value;
+    console.log('ABOUT TO CLICK');
+    controls.forEach((control) => {
+      const component = onGetComponentById(control.id);
+
+      console.log(component, control);
+      if (component.onClick) component.onClick(value);
+
+      this.setState({ value });
+    });
+  };
+
+  getComponents = () => {
+    const { controls, onGetComponentById } = this.props;
+    const components = controls
+      .map((connection) => onGetComponentById(connection.id))
+      .filter(Boolean); // filter out falsy values
+
+    if (!components.length || components.length !== controls.length) {
+      return setTimeout(() => this.getComponents(), 300);
+    }
+
+    return true;
   };
 
   calculateComputedValue = (value, rateOfChange) => {
@@ -42,13 +70,24 @@ class RemoteControl extends Component {
     }
   };
 
+  invertedValue = (value) => {
+    if (value === 50) return value;
+
+    return 100 - value;
+  };
+
   render() {
     const { children } = this.props;
+    const { value } = this.state;
     const childrenWithChange = children && React.Children.map(children, (child) => {
-      return React.cloneElement(child, { onChange: this.onChange });
+      return React.cloneElement(child, {
+        onClick: this.onClick,
+        onChange: this.onChange,
+        value
+      });
     });
 
-    return childrenWithChange || null;
+    return this.getComponents() && childrenWithChange || null;
   }
 }
 

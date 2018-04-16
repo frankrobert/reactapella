@@ -12,6 +12,7 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
       ]),
       audioContext: PropTypes.object,
       currentNode: PropTypes.object,
+      source: PropTypes.bool,
       id: PropTypes.string,
       destination: PropTypes.bool,
       onSetNodeById: PropTypes.func,
@@ -26,10 +27,11 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
+      console.log(nextProps.currentNode, nextProps.source);
       if (
-        nextProps.audioContext &&
-        nextProps.currentNode &&
-        !prevState.audioNode
+        nextProps.audioContext
+        && (nextProps.currentNode || nextProps.source)
+        && !prevState.audioNode
       ) {
         const audioNode = new AudioNodeConstructor(
           nextProps.audioContext,
@@ -48,7 +50,8 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
 
     componentDidUpdate(prevProps, prevState) {
       if (!prevState.audioNode && this.state.audioNode) {
-        this.props.currentNode.connect(this.state.audioNode);
+        console.log(WrappedComponent, prevProps.source);
+        if (!prevProps.source) this.props.currentNode.connect(this.state.audioNode);
 
         if (prevProps.id)
           this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
@@ -64,7 +67,9 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
     }
 
     setupParams = (params) => {
-      const { currentNode } = this.props;
+      const { currentNode, source } = this.props;
+
+      if (source) return;
 
       if (Array.isArray(params)) {
         params.forEach((param) =>
@@ -106,6 +111,7 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
         destination,
         params, // TODO figure out what to name this/how to use it
         options,
+        source,
         ...rest
       } = this.props;
       const childrenWithProps = children && React.Children.map(children, (child) => {

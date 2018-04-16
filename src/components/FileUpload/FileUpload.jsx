@@ -8,7 +8,8 @@ class FileUpload extends Component {
       PropTypes.node
     ]),
     audioContext: PropTypes.object,
-    audioDestination: PropTypes.object
+    audioDestination: PropTypes.object,
+    source: PropTypes.bool
   };
 
   state = {
@@ -41,7 +42,7 @@ class FileUpload extends Component {
   };
 
   render() {
-    const { children, ...rest } = this.props;
+    const { children, source, ...rest } = this.props;
     const { audioSource, file } = this.state;
 
     const newElements = React.Children.map(children, (child) => {
