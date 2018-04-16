@@ -14,7 +14,8 @@ class Analyser extends Component {
     options: PropTypes.object,
     onSetNodeById: PropTypes.func,
     onGetNodeById: PropTypes.func,
-    connections: PropTypes.array
+    connections: PropTypes.array,
+    updateValueById: PropTypes.func
   };
 
   static defaultProps = {
@@ -115,7 +116,7 @@ class Analyser extends Component {
 
   createAnalyser = () => {
     const { audioNode } = this.state;
-    const { audioContext } = this.props;
+    const { audioContext, id, updateValueById } = this.props;
     const audioDataNode = audioContext.createScriptProcessor(2048, 1, 1);
 
     audioDataNode.onaudioprocess = () => {
@@ -127,6 +128,7 @@ class Analyser extends Component {
       const average = this.getAverageVolume(analyserFreqArray);
 
       this.setState({ value: average });
+      updateValueById(id, average);
     };
 
     this.setState({ audioDataNode });

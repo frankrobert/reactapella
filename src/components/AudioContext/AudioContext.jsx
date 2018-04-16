@@ -38,8 +38,6 @@ class AudioContext extends Component {
     const { nodeList } = this.state;
     const ids = nodeList.map((ref) => ref.id);
 
-    console.log('NEW ID', id, 'IDS: ', ids);
-
     if (!ids.includes(id)) {
       this.setState((prevState) => {
         return {
@@ -63,6 +61,25 @@ class AudioContext extends Component {
     return component;
   };
 
+  getValueById = (id) => {
+    const { nodeList } = this.state;
+    const { value } = nodeList.find((ref) => ref.id === id) || {};
+
+    return value;
+  };
+
+  updateValueById = (id, value) => {
+    this.setState((prevState) => {
+      const nodeListWithValue = prevState.nodeList.map((node) => {
+        if (node.id === id) return Object.assign({}, node, { value });
+
+        return node;
+      });
+
+      return { nodeList: nodeListWithValue }
+    });
+  };
+
   render() {
     const { children } = this.props;
     const data = {
@@ -70,7 +87,9 @@ class AudioContext extends Component {
       master: this,
       onSetNodeById: this.setNodeById,
       onGetNodeById: this.getNodeById,
-      onGetComponentById: this.getComponentById
+      onGetComponentById: this.getComponentById,
+      updateValueById: this.updateValueById,
+      getValueById: this.getValueById
     };
 
     const childrenWithAudio = React.Children.map(children, (child) => {

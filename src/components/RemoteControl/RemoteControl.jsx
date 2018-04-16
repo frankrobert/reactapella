@@ -8,7 +8,8 @@ class RemoteControl extends Component {
       PropTypes.node
     ]),
     controls: PropTypes.array,
-    onGetComponentById: PropTypes.func
+    onGetComponentById: PropTypes.func,
+    getValueById: PropTypes.func
   };
 
   state = {
@@ -18,7 +19,6 @@ class RemoteControl extends Component {
   onChange = (value, range) => {
     const { controls, onGetComponentById } = this.props;
 
-    console.log('ABOUT TO CHANGE');
     controls.forEach((control) => {
       const component = onGetComponentById(control.id);
       const computedValue = this.calculateComputedValue(
@@ -35,11 +35,9 @@ class RemoteControl extends Component {
   onClick = (value) => {
     const { controls, onGetComponentById } = this.props;
 
-    console.log('ABOUT TO CLICK');
     controls.forEach((control) => {
       const component = onGetComponentById(control.id);
 
-      console.log(component, control);
       if (component.onClick) component.onClick(value);
 
       this.setState({ value });
@@ -57,6 +55,19 @@ class RemoteControl extends Component {
     }
 
     return true;
+  };
+
+  getValues = () => {
+    const { controls, getValueById } = this.props;
+
+    return controls
+      .map((connection) => {
+        const gotValue = getValueById(connection.id);
+
+        return gotValue;
+      })
+      .filter(Boolean)
+      .reduce((a, b) => a + b, 0) / controls.length;
   };
 
   calculateComputedValue = (value, rateOfChange) => {
@@ -79,11 +90,12 @@ class RemoteControl extends Component {
   render() {
     const { children } = this.props;
     const { value } = this.state;
+    const computedValue = value || this.getValues();
     const childrenWithChange = children && React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         onClick: this.onClick,
         onChange: this.onChange,
-        value
+        value: computedValue
       });
     });
 

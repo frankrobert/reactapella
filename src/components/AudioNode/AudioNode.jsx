@@ -27,7 +27,6 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
     };
 
     static getDerivedStateFromProps(nextProps, prevState) {
-      console.log(nextProps.currentNode, nextProps.source);
       if (
         nextProps.audioContext
         && (nextProps.currentNode || nextProps.source)
@@ -50,7 +49,6 @@ export default function createAudioNode(WrappedComponent, AudioNodeConstructor) 
 
     componentDidUpdate(prevProps, prevState) {
       if (!prevState.audioNode && this.state.audioNode) {
-        console.log(WrappedComponent, prevProps.source);
         if (!prevProps.source) this.props.currentNode.connect(this.state.audioNode);
 
         if (prevProps.id)
