@@ -55,7 +55,7 @@ class Analyser extends Component {
       this.state.audioDataNode.connect(this.props.audioContext.destination);
 
       if (prevProps.id)
-        this.props.onSetNodeById(prevProps.id, this.state.gainNode);
+        this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
       if (this.props.destination)
         this.state.audioNode.connect(this.props.audioContext.destination);
       if (prevProps.connections && prevProps.connections.length) {
