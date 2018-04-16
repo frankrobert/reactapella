@@ -30,7 +30,6 @@ const OuterText = styled.div`
 const TextArea = styled.div`
   overflow-y: auto;
   padding: 10px 30px;
-  height: 500px;
   ::-webkit-scrollbar {
     width: 10px;
   }
@@ -80,7 +79,7 @@ const Title = styled.h3`
 // eslint-disable-next-line
 class LessonSpace extends Component {
   static propTypes = {
-    lessonText: PropTypes.string,
+    text: PropTypes.string,
     title: PropTypes.string
   };
 
@@ -105,13 +104,13 @@ class LessonSpace extends Component {
 
   render() {
     const { isScrolling } = this.state;
-    const { lessonText, title } = this.props;
+    const { text, title } = this.props;
 
     return (
       <OuterText onWheel={this.updateOnScroll}>
         <TextArea>
           <Title>{title}</Title>
-          {lessonText}
+          <p>{text}</p>
         </TextArea>
         <Buttons
           innerRef={(e) => (this.buttons = e)} // eslint-disable-line

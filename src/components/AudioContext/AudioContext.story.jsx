@@ -8,9 +8,69 @@ import AnalyserNode from '../AnalyserNode/AnalyserNode';
 import StereoPanner from '../StereoPanner/StereoPanner';
 import GainNode from '../GainNode/GainNode';
 import RemoteControl from '../RemoteControl/RemoteControl';
+import LessonSpace from '../LessonSpace/LessonSpace';
 import Button from '../Button/Button';
 import Meter from '../Meter/Meter';
 import Knob from '../Knob/Knob';
+
+const Visuals1 = (props) => (
+  <div style={
+    {
+      background: 'goldenrod',
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'center'
+    }
+  }>
+    <h1 style={{ margin: 'auto', textAlign: 'center', width: '100%' }}>React Web Audio Demo</h1>
+    <RemoteControl {...props} controls={[{ id: 'analyser' }]}>
+      <Meter />
+    </RemoteControl>
+    <div style={
+      {
+        background: 'cyan',
+        display: 'flex',
+        flexWrap: 'wrap',
+        width: '100%'
+      }
+    }>
+      <RemoteControl {...props} controls={[{ id: 'lfo' }]}>
+        <Button />
+      </RemoteControl>
+      <RemoteControl {...props} controls={
+        [
+          { id: 'dryMix', rateOfChange: 'inverted' },
+          { id: 'wetMix' }
+        ]
+      }>
+        <Knob initialValue={100} />
+      </RemoteControl>
+    </div>
+  </div>
+);
+
+const lessonTitle = 'Gain some Gains';
+const lessonText = `
+Gain is a pretty straightforward concept. It's most commonly used to modify volume values.
+\n\n
+Let's try it out:
+\n  1. Upload audio file.
+\n  2. Press play.
+\n  3. Twist the knob and hear the results.
+`;
+
+const Visuals2 = (props) => (
+  <div style={{ background: 'grey' }}>
+    <div>
+      <LessonSpace text={lessonText} title={lessonTitle} />
+    </div>
+    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+      <RemoteControl {...props} controls={[{ id: 'gain' }]}>
+        <Knob degreeRange={180} degreeOffset={90} />
+      </RemoteControl>
+    </div>
+  </div>
+);
 
 const stories = storiesOf('AudioContext', module);
 
@@ -79,55 +139,46 @@ stories
   ))
   .add('with Wet/Dry and controlled UI', () => {
     return (
-      <div>
-        <AudioContext>
-          <AudioSource source={text('Source', 'file')}>
-            <GainNode>
-              <StereoPanner id="panner">
-                <GainNode id="wetMix" destination />
-              </StereoPanner>
-              <GainNode id="dryMix">
-                <AnalyserNode
-                  id="analyser"
-                  options={{
-                    smoothingTimeConstant: 0.3,
-                    maxDecibels: -10,
-                    fftSize: 256
-                  }}
-                  destination
-                />
-              </GainNode>
+      <AudioContext>
+        <AudioSource source={text('Source', 'file')}>
+          <GainNode>
+            <StereoPanner id="panner">
+              <GainNode id="wetMix" destination />
+            </StereoPanner>
+            <GainNode id="dryMix">
+              <AnalyserNode
+                id="analyser"
+                options={{
+                  smoothingTimeConstant: 0.3,
+                  maxDecibels: -10,
+                  fftSize: 256
+                }}
+                destination
+              />
             </GainNode>
-          </AudioSource>
-          <AudioSource
-            id="lfo"
-            source="oscillator"
-            options={{ frequency: 4 }}
-            connections={[{ id: 'panner', params: ['pan'] }]}
-          />
+          </GainNode>
+        </AudioSource>
+        <AudioSource
+          id="lfo"
+          source="oscillator"
+          options={{ frequency: 4 }}
+          connections={[{ id: 'panner', params: ['pan'] }]}
+        />
 
-          <ReactWebAudioConsumer>
-            {config => (
-              <div style={{ background: 'red', display: 'flex', flexWrap: 'wrap' }}>
-                <span>HELLO WORLD TEST THE AUDIO</span>
-                <RemoteControl {...config} controls={[{ id: 'analyser' }]}>
-                  <Meter />
-                </RemoteControl>
-                <RemoteControl {...config} controls={[{ id: 'lfo' }]}>
-                  <Button />
-                </RemoteControl>
-                <RemoteControl {...config} controls={
-                  [
-                    { id: 'dryMix', rateOfChange: 'inverted' },
-                    { id: 'wetMix' }
-                  ]
-                }>
-                  <Knob initialValue={100} />
-                </RemoteControl>
-              </div>
-            )}
-          </ReactWebAudioConsumer>
-        </AudioContext>
-      </div>
+        <ReactWebAudioConsumer>
+          {config => <Visuals1 {...config} />}
+        </ReactWebAudioConsumer>
+      </AudioContext>
     );
-  });
+  })
+  .add('With Dummy Lesson', () => (
+    <AudioContext>
+      <AudioSource source="file">
+        <GainNode id="gain" destination />
+      </AudioSource>
+
+      <ReactWebAudioConsumer>
+        {config => <Visuals2 {...config} />}
+      </ReactWebAudioConsumer>
+    </AudioContext>
+  ));

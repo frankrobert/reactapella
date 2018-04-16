@@ -9,6 +9,7 @@ class RemoteControl extends Component {
     ]),
     controls: PropTypes.array,
     onGetComponentById: PropTypes.func,
+    onGetNodeById: PropTypes.func,
     getValueById: PropTypes.func
   };
 
@@ -17,19 +18,27 @@ class RemoteControl extends Component {
   };
 
   onChange = (value, range) => {
-    const { controls, onGetComponentById } = this.props;
+    const { controls, onGetComponentById, onGetNodeById } = this.props;
+
+    const components = controls
+      .map((connection) => onGetNodeById(connection.id))
+      .filter(Boolean); // filter out falsy values
+
+    if (!components.length || components.length !== controls.length) {
+      return;
+    }
 
     controls.forEach((control) => {
-      const component = onGetComponentById(control.id);
+      const component = onGetComponentById(control.id) || {};
       const computedValue = this.calculateComputedValue(
         value,
         control.rateOfChange
       );
 
       if (component.onChange) component.onChange(computedValue, control.param, range);
-
-      this.setState({ value });
     });
+
+    this.setState({ value });
   };
 
   onClick = (value) => {
