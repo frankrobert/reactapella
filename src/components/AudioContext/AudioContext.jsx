@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+const ReactWebAudioContext = React.createContext({});
+
 class AudioContext extends Component {
   static propTypes = {
     children: PropTypes.oneOfType([
@@ -9,13 +11,9 @@ class AudioContext extends Component {
     ])
   };
 
-  constructor(props) {
-    super(props);
-    this.nodeList = [];
-  }
-
   state = {
-    audioContext: null
+    audioContext: null,
+    nodeList: []
   };
 
   componentDidMount() {
@@ -37,36 +35,58 @@ class AudioContext extends Component {
   };
 
   setNodeById = (id, node, component) => {
-    const ids = this.nodeList.map((ref) => ref.id);
+    const { nodeList } = this.state;
+    const ids = nodeList.map((ref) => ref.id);
 
-    if (!ids.includes(id)) this.nodeList.push({ id, node, component });
+    console.log('NEW ID', id, 'IDS: ', ids);
+
+    if (!ids.includes(id)) {
+      this.setState((prevState) => {
+        return {
+          nodeList: prevState.nodeList.concat([{ id, node, component }])
+        };
+      });
+    }
   };
 
   getNodeById = (id) => {
-    const { node } = this.nodeList.find((ref) => ref.id === id) || {};
+    const { nodeList } = this.state;
+    const { node } = nodeList.find((ref) => ref.id === id) || {};
 
     return node;
   };
 
   getComponentById = (id) => {
-    const { component } = this.nodeList.find((ref) => ref.id === id) || {};
+    const { nodeList } = this.state;
+    const { component } = nodeList.find((ref) => ref.id === id) || {};
 
     return component;
   };
 
   render() {
     const { children } = this.props;
+    const data = {
+      ...this.state,
+      master: this,
+      onSetNodeById: this.setNodeById,
+      onGetNodeById: this.getNodeById,
+      onGetComponentById: this.getComponentById
+    };
+
     const childrenWithAudio = React.Children.map(children, (child) => {
-      return React.cloneElement(child, {
-        ...this.state,
-        onSetNodeById: this.setNodeById,
-        onGetNodeById: this.getNodeById,
-        onGetComponentById: this.getComponentById
-      });
+      if (typeof child.type === 'function') return React.cloneElement(child, data);
+
+      return child;
     });
 
-    return childrenWithAudio;
+    return (
+      <ReactWebAudioContext.Provider value={data}>
+        {childrenWithAudio}
+      </ReactWebAudioContext.Provider>
+    );
   }
 }
+
+export const ReactWebAudioConsumer = ReactWebAudioContext.Consumer;
 
 export default AudioContext;

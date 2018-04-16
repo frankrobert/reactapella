@@ -2,7 +2,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react';
 import centered from '@storybook/addon-centered';
 import { withKnobs, number, text } from '@storybook/addon-knobs/react';
-import AudioContext from './AudioContext';
+import AudioContext, { ReactWebAudioConsumer } from './AudioContext';
 import AudioSource from '../AudioSource/AudioSource';
 import AnalyserNode from '../AnalyserNode/AnalyserNode';
 import StereoPanner from '../StereoPanner/StereoPanner';
@@ -21,10 +21,6 @@ stories
     <AudioContext>
       <AudioSource source={text('Source', 'microphone')}>
         <GainNode initialValue={100}>
-          <Knob
-            degreeRange={number('Degree Range #2', 180)}
-            degreeOffset={number('Degree Offset #2', 90)}
-          />
           <AnalyserNode destination>
             <Meter />
           </AnalyserNode>
@@ -83,48 +79,55 @@ stories
   ))
   .add('with Wet/Dry and controlled UI', () => {
     return (
-      <AudioContext>
-        <AudioSource source={text('Source', 'file')}>
-          <GainNode>
-            <StereoPanner id="panner">
-              <GainNode id="wetMix" destination />
-            </StereoPanner>
-            <GainNode id="dryMix">
-              <AnalyserNode
-                id="analyser"
-                options={{
-                  smoothingTimeConstant: 0.3,
-                  maxDecibels: -10,
-                  fftSize: 256
-                }}
-                destination
-              />
+      <div>
+        <AudioContext>
+          <AudioSource source={text('Source', 'file')}>
+            <GainNode>
+              <StereoPanner id="panner">
+                <GainNode id="wetMix" destination />
+              </StereoPanner>
+              <GainNode id="dryMix">
+                <AnalyserNode
+                  id="analyser"
+                  options={{
+                    smoothingTimeConstant: 0.3,
+                    maxDecibels: -10,
+                    fftSize: 256
+                  }}
+                  destination
+                />
+              </GainNode>
             </GainNode>
-          </GainNode>
-        </AudioSource>
-        <AudioSource
-          id="lfo"
-          source="oscillator"
-          options={{ frequency: 4 }}
-          connections={[{ id: 'panner', params: ['pan'] }]}
-        />
+          </AudioSource>
+          <AudioSource
+            id="lfo"
+            source="oscillator"
+            options={{ frequency: 4 }}
+            connections={[{ id: 'panner', params: ['pan'] }]}
+          />
 
-        <div style={{ display: 'flex' }}>
-          <RemoteControl controls={[{ id: 'analyser' }]}>
-            <Meter />
-          </RemoteControl>
-          <RemoteControl controls={[{ id: 'lfo' }]}>
-            <Button />
-          </RemoteControl>
-          <RemoteControl controls={
-            [
-              { id: 'dryMix', rateOfChange: 'inverted' },
-              { id: 'wetMix' }
-            ]
-          }>
-            <Knob />
-          </RemoteControl>
-        </div>
-      </AudioContext>
+          <ReactWebAudioConsumer>
+            {config => (
+              <div style={{ background: 'red', display: 'flex', flexWrap: 'wrap' }}>
+                <span>HELLO WORLD TEST THE AUDIO</span>
+                <RemoteControl {...config} controls={[{ id: 'analyser' }]}>
+                  <Meter />
+                </RemoteControl>
+                <RemoteControl {...config} controls={[{ id: 'lfo' }]}>
+                  <Button />
+                </RemoteControl>
+                <RemoteControl {...config} controls={
+                  [
+                    { id: 'dryMix', rateOfChange: 'inverted' },
+                    { id: 'wetMix' }
+                  ]
+                }>
+                  <Knob initialValue={100} />
+                </RemoteControl>
+              </div>
+            )}
+          </ReactWebAudioConsumer>
+        </AudioContext>
+      </div>
     );
   });
