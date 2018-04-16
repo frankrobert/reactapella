@@ -19,6 +19,7 @@
     "devDependencies": {
         "babel-eslint": "^8.2.2",
         "babel-jest": "^22.4.1",
+        "babel-plugin-react-docgen": "^1.9.0",
         "babel-preset-env": "^1.6.1",
         "babel-preset-react": "^6.24.1",
         "babel-preset-stage-0": "^6.24.1",
@@ -40,6 +41,7 @@
     },
     "dependencies": {
         "@storybook/addon-centered": "^3.3.15",
+        "@storybook/addon-info": "^3.4.1",
         "@storybook/addon-knobs": "^3.3.14",
         "@storybook/react": "^3.3.14",
         "lodash": "^4.17.5",
