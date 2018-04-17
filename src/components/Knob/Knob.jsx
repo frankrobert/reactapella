@@ -64,6 +64,9 @@ const Range = styled.input.attrs({ type: 'range' })`
   visibility: hidden;
 `;
 
+/**
+ * Knob that can be used to control values. It's cool.
+ */
 class KnobInput extends Component {
   constructor(props) {
     super(props);
@@ -224,19 +227,30 @@ class KnobInput extends Component {
 }
 
 KnobInput.propTypes = {
+  /** Determines whether the knob will snap back to initial value on release */
   valueSnapping: PropTypes.bool,
+  /** Forces a maximum range for the knob in degrees */
   degreeRange: PropTypes.number,
+  /** Offset in degrees to initialize the Knob beginning from the bottom and moving in clockwise order. */
   degreeOffset: PropTypes.number,
+  /** Amount to change value by on change. */
   step: PropTypes.number,
+  /** Number of divisions for the knob to snap to. */
   divisions: PropTypes.number,
+  /** Lowest value for the knob. */
   min: PropTypes.number,
+  /** Highest value for the knob. */
   max: PropTypes.number,
+  /** Starting value for the knob. */
   initialValue: PropTypes.number,
+  /** Current value for the knob. */
   value: PropTypes.number,
+  /** Function defining how to update the knob value. */
   onChange: PropTypes.func
 };
 
 KnobInput.defaultProps = {
+  valueSnapping: false,
   initialValue: 0,
   degreeRange: 360,
   degreeOffset: 0,
