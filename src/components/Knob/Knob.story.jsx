@@ -1,5 +1,6 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
+import { withInfo } from '@storybook/addon-info';
 import { withKnobs, number, boolean } from '@storybook/addon-knobs/react';
 import centered from '@storybook/addon-centered';
 import Knob from './Knob';
@@ -7,7 +8,16 @@ import WithValueControl from '../../HOC/WithValueControl/WithValueControl';
 
 const stories = storiesOf('Knobs', module);
 
-stories.addDecorator(withKnobs).addDecorator(centered);
+const descriptions = {
+  'with default values': 'Default knob styles and functionality.',
+  'with divisions': 'Knob that snaps to values',
+  'with offset': 'Offset in degrees to initialize the Knob beginning from the bottom and moving in clockwise order.'
+};
+
+stories
+  .addDecorator((story, context) => withInfo(descriptions[context.story])(story)(context))
+  .addDecorator(withKnobs)
+  .addDecorator(centered);
 
 stories
   .add('with default values', () => (
