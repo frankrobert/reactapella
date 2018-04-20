@@ -8,7 +8,8 @@ class AudioContext extends Component {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
-    ])
+    ]),
+    nodes: PropTypes.array
   };
 
   state = {
@@ -27,11 +28,15 @@ class AudioContext extends Component {
   }
 
   setAudioContext = () => {
+    const { nodes } = this.props;
+
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
     const audioContext = new window.AudioContext();
 
-    this.setState({ audioContext });
+    this.setState({ audioContext }, () => {
+      if (nodes) this.createAudioNodes(nodes);
+    });
   };
 
   setNodeById = (id, node, component) => {
@@ -80,6 +85,97 @@ class AudioContext extends Component {
     });
   };
 
+  createAudioNodes = (nodes) => {
+    const { audioContext } = this.state;
+    const flattenedNodes = []; // react state
+
+    nodes.forEach((node) => {
+      let current = node;
+      let last = current;
+
+      current.next = null;
+      current.depth = 0;
+
+      while (current) {
+        const children = current.connections;
+
+        if (!current.visited) {
+          const { connections, audioNode, ...rest } = current;
+
+          if (!(current.audioNode instanceof AudioNode)) {
+            current.audioNode = new window[current.audioNode.type](
+              audioContext,
+              current.audioNode.options
+            );
+          }
+
+          flattenedNodes.push({ ...rest, audioNode: current.audioNode });
+        }
+
+        if (current.depth === 0) current.visited = true;
+
+        if (!current.connections) {
+          break;
+        }
+
+        // eslint-disable-next-line
+        children.forEach((child) => {
+          if (!child.visited) {
+            const { connections, audioNode, ...rest } = child;
+
+            if (!(child.audioNode instanceof AudioNode)) {
+              child.audioNode = new window[child.audioNode.type]( // eslint-disable-line no-param-reassign
+                audioContext,
+                child.audioNode.options
+              );
+            }
+
+            flattenedNodes.push({ ...rest, audioNode: child.audioNode });
+          }
+
+          current.audioNode.connect(child.audioNode);
+          if (child.destination) child.audioNode.connect(audioContext.destination);
+
+          child.next = null; // eslint-disable-line no-param-reassign
+          child.visited = true; // eslint-disable-line no-param-reassign
+          child.depth = current.depth + 1; // eslint-disable-line no-param-reassign
+          //place new item at the tail of the list
+          last.next = child;
+          last = child;
+        });
+        //removes this item from the linked list
+        current = current.next;
+      }
+    });
+
+    this.setState(
+      { nodeList: flattenedNodes },
+      () => this.connectRemoteNodes(flattenedNodes)
+    );
+  }
+
+  connectRemoteNodes = (nodes) => {
+    const remoteNodes = nodes.filter((node) => {
+      const keys = Object.keys(node);
+
+      return keys.includes('remoteControls');
+    });
+
+    remoteNodes.forEach((remoteNode) => {
+      remoteNode.remoteControls.forEach((control) => {
+        const remote = nodes.find((node) => node.id === control.id);
+
+        if (!control.params) {
+          remoteNode.audioNode.connect(remote.audioNode);
+        } else {
+          control.params.forEach((param) => {
+            remoteNode.audioNode.connect(remote.audioNode[param]);
+          });
+        }
+      });
+    });
+  };
+
   render() {
     const { children } = this.props;
     const data = {
@@ -89,7 +185,8 @@ class AudioContext extends Component {
       onGetNodeById: this.getNodeById,
       onGetComponentById: this.getComponentById,
       updateValueById: this.updateValueById,
-      getValueById: this.getValueById
+      getValueById: this.getValueById,
+      createAudioNodes: this.createAudioNodes
     };
 
     const childrenWithAudio = React.Children.map(children, (child) => {

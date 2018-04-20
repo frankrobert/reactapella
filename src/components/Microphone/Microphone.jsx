@@ -3,16 +3,9 @@ import PropTypes from 'prop-types';
 
 class Microphone extends Component {
   static propTypes = {
-    children: PropTypes.oneOfType([
-      PropTypes.arrayOf(PropTypes.node),
-      PropTypes.node
-    ]),
     audioContext: PropTypes.object,
-    source: PropTypes.bool
-  };
-
-  state = {
-    audioSource: null
+    nodes: PropTypes.nodes,
+    createAudioNodes: PropTypes.func
   };
 
   componentDidMount() {
@@ -20,7 +13,7 @@ class Microphone extends Component {
   }
 
   getMicrophoneStream = () => {
-    const { audioContext } = this.props;
+    const { audioContext, nodes, createAudioNodes } = this.props;
 
     if (!audioContext) {
       return setTimeout(this.getMicrophoneStream, 50);
@@ -50,7 +43,11 @@ class Microphone extends Component {
         (stream) => {
           const audioSource = audioContext.createMediaStreamSource(stream);
 
-          this.setState({ audioSource });
+          if (nodes) {
+            const newNodes = [{ id: 'mic', audioNode: audioSource, connections: nodes }];
+
+            createAudioNodes(newNodes);
+          }
         },
         () => console.log('No stream found.')
       );
@@ -60,17 +57,7 @@ class Microphone extends Component {
   };
 
   render() {
-    const { children, source, ...rest } = this.props;
-    const { audioSource } = this.state;
-    const childrenWithProps = children && React.Children.map(children, (child) => {
-      return React.cloneElement(child, {
-        ...rest,
-        ...this.state,
-        currentNode: audioSource
-      });
-    });
-
-    return childrenWithProps || null;
+    return null;
   }
 }
 

@@ -16,7 +16,7 @@ const AudioSource = ({ children, source, ...rest }) => {
       return <OscillatorNode source {...rest}>{children}</OscillatorNode>;
     }
     default: {
-      return children;
+      return children || null;
     }
   }
 };
