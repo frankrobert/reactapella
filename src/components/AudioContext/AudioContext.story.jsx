@@ -1,8 +1,8 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react';
 import centered from '@storybook/addon-centered';
-import AudioContext, { ReactWebAudioConsumer } from './AudioContext';
 import { withKnobs, number, select } from '@storybook/addon-knobs/react';
+import AudioContext, { ReactWebAudioConsumer } from './AudioContext';
 import AudioSource from '../AudioSource/AudioSource';
 import AnalyserNode from '../AnalyserNode/AnalyserNode';
 import StereoPanner from '../StereoPanner/StereoPanner';
