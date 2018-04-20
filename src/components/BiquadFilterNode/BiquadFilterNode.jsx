@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FUTURE_EVENT } from '../../constants/constants';
