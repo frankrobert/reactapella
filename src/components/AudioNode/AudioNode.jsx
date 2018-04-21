@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getDisplayName } from '../../lib/helpers';
+import { getDisplayName } from '../../lib/utils';
 
 export default function createAudioNode(WrappedComponent, AudioNodeConstructor) {
   return class AudioNode extends WrappedComponent {

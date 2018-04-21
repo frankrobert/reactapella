@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { getDisplayName } from '../../lib/helpers';
+import { getDisplayName } from '../../lib/utils';
 
 class WithValueControl extends Component {
   state = {
