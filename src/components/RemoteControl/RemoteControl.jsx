@@ -17,6 +17,12 @@ class RemoteControl extends Component {
     value: null
   };
 
+  /**
+   * @description Calculates the value of each affected audio node
+   * and recomputes the value to send to its respective onChange.
+   * @param {number} value The current raw value sent from the controlling component.
+   * @param {Array[number]} range The value range for the control component.
+   */
   onChange = (value, range) => {
     const { controls, onGetComponentById, onGetNodeById } = this.props;
 
