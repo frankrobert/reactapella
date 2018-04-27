@@ -25,6 +25,7 @@ class BiquadFilter extends Component {
     );
   };
 
+  // TODO: Consider moving this into a library or the top-level AudioNode
   getRange = (param) => {
     // TODO Find detailed ranges
     switch(param) {

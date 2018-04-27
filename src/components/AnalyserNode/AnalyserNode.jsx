@@ -94,6 +94,7 @@ class Analyser extends Component {
     return average;
   };
 
+  // TODO: Fix the clipping functionality
   // checkClipping = (analyserFreqArray) => {
   //   // Iterate through buffer to check if any of the |values| exceeds 1
   //   // const isClipping = analyserFreqArray
@@ -117,6 +118,7 @@ class Analyser extends Component {
   createAnalyser = () => {
     const { audioNode } = this.state;
     const { audioContext, id, updateValueById } = this.props;
+    // TODO: Remove script processor in favor of AudioWorklet
     const audioDataNode = audioContext.createScriptProcessor(2048, 1, 1);
 
     audioDataNode.onaudioprocess = () => {

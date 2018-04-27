@@ -102,6 +102,8 @@ class LessonSpace extends Component {
     );
   };
 
+  // TODO: Add page count to conditionally display buttons
+  // TODO: Add disabled state to buttons
   render() {
     const { isScrolling } = this.state;
     const { text, title } = this.props;

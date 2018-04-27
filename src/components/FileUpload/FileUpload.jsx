@@ -31,6 +31,7 @@ class FileUpload extends Component {
     const { audioContext } = this.props;
 
     if (!audioContext || !this.audioElement) {
+      // TODO: Replace this with an EventEmitter
       return setTimeout(this.getAudioElementSource, 50);
     }
 

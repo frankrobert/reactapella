@@ -23,6 +23,7 @@ class Microphone extends Component {
     const { audioContext } = this.props;
 
     if (!audioContext) {
+      // TODO: Leverage EventEmitter to avoid looping
       return setTimeout(this.getMicrophoneStream, 50);
     }
 

@@ -8,6 +8,7 @@ class StereoPanner extends Component {
     audioContext: PropTypes.object
   };
 
+  // TODO: Check all onChange methods
   onChange = (value, param = 'pan') => {
     const { audioContext } = this.props;
     const { audioNode } = this.state;
@@ -21,6 +22,7 @@ class StereoPanner extends Component {
 
     audioNode[param].setValueAtTime(
       computedValue,
+      // TODO: Check if the setter can avoid the FUTURE_EVENT constant
       audioContext.currentTime + FUTURE_EVENT
     );
   };

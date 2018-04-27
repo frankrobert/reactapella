@@ -34,6 +34,7 @@ class AudioContext extends Component {
     this.setState({ audioContext });
   };
 
+  // TODO: Lift these into context
   setNodeById = (id, node, component) => {
     const { nodeList } = this.state;
     const ids = nodeList.map((ref) => ref.id);
@@ -82,6 +83,7 @@ class AudioContext extends Component {
 
   render() {
     const { children } = this.props;
+    // TODO: Clean up context and remove most unnecessary props
     const data = {
       ...this.state,
       master: this,

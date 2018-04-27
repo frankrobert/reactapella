@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class RemoteControl extends Component {
+  // TODO: Consider a render prop for the chidren
   static propTypes = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
@@ -30,10 +31,12 @@ class RemoteControl extends Component {
       .map((connection) => onGetNodeById(connection.id))
       .filter(Boolean); // filter out falsy values
 
+    // This means that at least 1 AudioNode is not ready
     if (!components.length || components.length !== controls.length) {
       return;
     }
 
+    // TODO: Need to recalibrate ranges here
     controls.forEach((control) => {
       const component = onGetComponentById(control.id) || {};
       const computedValue = this.calculateComputedValue(
@@ -47,6 +50,7 @@ class RemoteControl extends Component {
     this.setState({ value });
   };
 
+  // TODO: Revisit this when OscillatorNode and others are worked on
   onClick = (value) => {
     const { controls, onGetComponentById } = this.props;
 
@@ -61,11 +65,10 @@ class RemoteControl extends Component {
 
   getComponents = () => {
     const { controls, onGetComponentById } = this.props;
-    const components = controls
-      .map((connection) => onGetComponentById(connection.id))
-      .filter(Boolean); // filter out falsy values
+    const components = controls.every((connection) => onGetComponentById(connection.id));
 
-    if (!components.length || components.length !== controls.length) {
+    if (!components) {
+      // TODO: Replace this with an EventEmitter
       return setTimeout(() => this.getComponents(), 300);
     }
 
@@ -105,6 +108,7 @@ class RemoteControl extends Component {
   render() {
     const { children } = this.props;
     const { value } = this.state;
+    // TODO: This could be replaced with an event emitter or a proxy
     const computedValue = value || this.getValues();
     const childrenWithChange = children && React.Children.map(children, (child) => {
       return React.cloneElement(child, {

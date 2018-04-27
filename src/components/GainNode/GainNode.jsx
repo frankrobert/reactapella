@@ -8,6 +8,7 @@ class Gain extends Component {
     audioContext: PropTypes.object
   };
 
+  // TODO: Standardize all onChange methods
   onChange = (value, param = 'gain') => {
     const { audioContext } = this.props;
     const { audioNode } = this.state;

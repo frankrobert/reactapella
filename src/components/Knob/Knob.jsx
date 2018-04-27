@@ -14,6 +14,7 @@ const KnobWrapper = styled.div`
   box-shadow: 0px 0px 20px 0px #63535b;
 `;
 
+// TODO: Consider adding infinite range ex: seeking through a song
 const InnerDial = styled.div`
   height: 180px;
   width: 180px;
@@ -158,6 +159,7 @@ class KnobInput extends Component {
   getClosest = (value) => {
     const { divisions, max } = this.props;
     const divisionStep = max / divisions;
+    // TODO: Change this to Array.from({ length: divisions }, (v, i) => i * divisionStep);
     const divisionsList = [...Array(divisions + 1)].map((division, i) => {
       return i * divisionStep;
     });
@@ -170,6 +172,7 @@ class KnobInput extends Component {
   renderDivisions = () => {
     const { divisions, max } = this.props;
     const divisionStep = max / divisions;
+    // TODO: Change this to Array.from({ length: divisions }, (v, i) => { ... });
     const options = [...Array(divisions + 1)].map((division, i) => (
       <option key={i} value={divisionStep * i} />
     ));
@@ -178,7 +181,7 @@ class KnobInput extends Component {
 
     return (
       <datalist id="divisions">{options.map((option) => option)}</datalist>
-    );
+    );check
   };
 
   render() {

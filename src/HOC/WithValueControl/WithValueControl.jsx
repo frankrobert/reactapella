@@ -7,12 +7,6 @@ class WithValueControl extends Component {
     value: this.props.initialValue
   };
 
-  componentDidCatch(error, info) {
-    // Display fallback UI
-    // You can also log the error to an error reporting service
-    console.error('WITH VALUE CONTROL CRASHED', error, info);
-  }
-
   onChange = (value) => {
     this.setState({ value });
   };

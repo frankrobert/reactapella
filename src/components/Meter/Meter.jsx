@@ -14,6 +14,7 @@ class Meter extends Component {
   static propTypes = {
     value: PropTypes.number,
     vertical: PropTypes.bool,
+    // TODO: Fix clipping
     isClipping: PropTypes.bool
   };
 
@@ -24,6 +25,7 @@ class Meter extends Component {
 
   constructor(props) {
     super(props);
+    // TODO: Allow the dimensions of the meter to be provided by props
     this.ctx = null;
     this.width = 300;
     this.height = 50;

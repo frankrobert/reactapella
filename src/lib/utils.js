@@ -5,6 +5,8 @@ export function getDisplayName(WrappedComponent) {
 /* Credit to Jordan Eldredge on these:
  * https://github.com/captbaritone/webamp/blob/master/js/utils.js
  */
+
+// TODO: Revise usage
 export const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 export const toPercent = (min, max, value) => (value - min) / (max - min);

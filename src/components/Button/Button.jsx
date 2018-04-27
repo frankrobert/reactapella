@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { COLORS } from '../../constants/constants';
 
+// TODO: Consider moving toward CSS Modules
 /** Button component that can do cool things */
 const Button = styled.button`
   width: 120px;

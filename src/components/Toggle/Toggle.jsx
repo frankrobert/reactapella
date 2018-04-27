@@ -45,6 +45,7 @@ class Toggle extends Component {
     toggled: this.props.defaultToggled
   };
 
+  // TODO: Make sure onClick prop doesn't cause problems if missing
   onToggle = () => {
     const { onClick } = this.props;
 
