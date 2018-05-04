@@ -1,17 +1,11 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { getDisplayName } from '../../lib/helpers';
+import { getDisplayName } from '../../lib/utils';
 
 class WithValueControl extends Component {
   state = {
     value: this.props.initialValue
   };
-
-  componentDidCatch(error, info) {
-    // Display fallback UI
-    // You can also log the error to an error reporting service
-    console.error('WITH VALUE CONTROL CRASHED', error, info);
-  }
 
   onChange = (value) => {
     this.setState({ value });

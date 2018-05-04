@@ -7,7 +7,8 @@ class Microphone extends Component {
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
     ]),
-    audioContext: PropTypes.object
+    audioContext: PropTypes.object,
+    source: PropTypes.bool
   };
 
   state = {
@@ -22,6 +23,7 @@ class Microphone extends Component {
     const { audioContext } = this.props;
 
     if (!audioContext) {
+      // TODO: Leverage EventEmitter to avoid looping
       return setTimeout(this.getMicrophoneStream, 50);
     }
 
@@ -59,9 +61,9 @@ class Microphone extends Component {
   };
 
   render() {
-    const { children, ...rest } = this.props;
+    const { children, source, ...rest } = this.props;
     const { audioSource } = this.state;
-    const newElements = React.Children.map(children, (child) => {
+    const childrenWithProps = children && React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         ...this.state,
@@ -69,7 +71,7 @@ class Microphone extends Component {
       });
     });
 
-    return newElements;
+    return childrenWithProps || null;
   }
 }
 

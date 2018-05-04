@@ -14,7 +14,8 @@ class Analyser extends Component {
     options: PropTypes.object,
     onSetNodeById: PropTypes.func,
     onGetNodeById: PropTypes.func,
-    connections: PropTypes.array
+    connections: PropTypes.array,
+    updateValueById: PropTypes.func
   };
 
   static defaultProps = {
@@ -55,7 +56,7 @@ class Analyser extends Component {
       this.state.audioDataNode.connect(this.props.audioContext.destination);
 
       if (prevProps.id)
-        this.props.onSetNodeById(prevProps.id, this.state.gainNode);
+        this.props.onSetNodeById(prevProps.id, this.state.audioNode, this);
       if (this.props.destination)
         this.state.audioNode.connect(this.props.audioContext.destination);
       if (prevProps.connections && prevProps.connections.length) {
@@ -93,6 +94,7 @@ class Analyser extends Component {
     return average;
   };
 
+  // TODO: Fix the clipping functionality
   // checkClipping = (analyserFreqArray) => {
   //   // Iterate through buffer to check if any of the |values| exceeds 1
   //   // const isClipping = analyserFreqArray
@@ -115,7 +117,8 @@ class Analyser extends Component {
 
   createAnalyser = () => {
     const { audioNode } = this.state;
-    const { audioContext } = this.props;
+    const { audioContext, id, updateValueById } = this.props;
+    // TODO: Remove script processor in favor of AudioWorklet
     const audioDataNode = audioContext.createScriptProcessor(2048, 1, 1);
 
     audioDataNode.onaudioprocess = () => {
@@ -127,6 +130,7 @@ class Analyser extends Component {
       const average = this.getAverageVolume(analyserFreqArray);
 
       this.setState({ value: average });
+      updateValueById(id, average);
     };
 
     this.setState({ audioDataNode });
@@ -135,7 +139,7 @@ class Analyser extends Component {
   render() {
     const { audioNode, value } = this.state;
     const { children, audioContext, currentNode, ...rest } = this.props;
-    const newElements = React.Children.map(children, (child) => {
+    const childrenWithProps = children && React.Children.map(children, (child) => {
       return React.cloneElement(child, {
         ...rest,
         value,
@@ -143,7 +147,7 @@ class Analyser extends Component {
       });
     });
 
-    return newElements;
+    return childrenWithProps || null;
   }
 }
 

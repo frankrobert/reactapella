@@ -1,6 +1,6 @@
-import * as Helpers from './helpers';
+import * as utils from './utils';
 
-describe('Helpers', () => {
+describe('utils', () => {
   describe('getDisplayName', () => {
     let WrappedComponent = {};
 
@@ -15,7 +15,7 @@ describe('Helpers', () => {
 
       test('it should return the displayName', () => {
         const expected = 'Hello World';
-        const result = Helpers.getDisplayName(WrappedComponent);
+        const result = utils.getDisplayName(WrappedComponent);
 
         expect(result).toEqual(expected);
       });
@@ -28,7 +28,7 @@ describe('Helpers', () => {
 
       test('it should return the name', () => {
         const expected = 'Hello World 2';
-        const result = Helpers.getDisplayName(WrappedComponent);
+        const result = utils.getDisplayName(WrappedComponent);
 
         expect(result).toEqual(expected);
       });
@@ -41,7 +41,7 @@ describe('Helpers', () => {
 
       test('it should return \'Component\'', () => {
         const expected = 'Component';
-        const result = Helpers.getDisplayName(WrappedComponent);
+        const result = utils.getDisplayName(WrappedComponent);
 
         expect(result).toEqual(expected);
       });

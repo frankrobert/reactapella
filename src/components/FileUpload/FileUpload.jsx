@@ -8,7 +8,8 @@ class FileUpload extends Component {
       PropTypes.node
     ]),
     audioContext: PropTypes.object,
-    audioDestination: PropTypes.object
+    audioDestination: PropTypes.object,
+    source: PropTypes.bool
   };
 
   state = {
@@ -20,7 +21,7 @@ class FileUpload extends Component {
     e.stopPropagation();
     e.preventDefault();
 
-    const file = this.input.files[0];
+    const [file] = this.input.files;
 
     this.setState({ file });
     this.getAudioElementSource();
@@ -30,6 +31,7 @@ class FileUpload extends Component {
     const { audioContext } = this.props;
 
     if (!audioContext || !this.audioElement) {
+      // TODO: Replace this with an EventEmitter
       return setTimeout(this.getAudioElementSource, 50);
     }
 
@@ -41,7 +43,7 @@ class FileUpload extends Component {
   };
 
   render() {
-    const { children, ...rest } = this.props;
+    const { children, source, ...rest } = this.props;
     const { audioSource, file } = this.state;
 
     const newElements = React.Children.map(children, (child) => {
