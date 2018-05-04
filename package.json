@@ -11,7 +11,7 @@
         "eslint": "eslint -c .eslintrc.json --ext .js,.jsx ./",
         "lint:css": "stylelint 'src/**/*.js'",
         "format": "prettier --config .prettierrc --write **/*.{js,jsx}",
-        "lint": "npm run eslint && npm run format"
+        "lint": "npm run format && npm run eslint"
     },
     "keywords": [],
     "author": "",
